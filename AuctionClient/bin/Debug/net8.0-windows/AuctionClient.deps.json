@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "AuctionClient/1.0.0": {
+        "dependencies": {
+          "AuctionOwnerClient": "1.0.0"
+        },
+        "runtime": {
+          "AuctionClient.dll": {}
+        }
+      },
+      "AuctionOwnerClient/1.0.0": {
+        "runtime": {
+          "AuctionOwnerClient.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "AuctionClient/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "AuctionOwnerClient/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

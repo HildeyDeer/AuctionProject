@@ -1,0 +1,26 @@
+﻿<Window x:Class="AuctionOwnerClient.OwnerAuctionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Управление аукционами" Height="500" Width="700">
+    <Grid>
+        <StackPanel Margin="10">
+            <TextBlock Text="Аукционы" FontSize="16"/>
+            <ListBox x:Name="AuctionList" Height="150"/>
+
+            <Button Content="Добавить аукцион" Click="AddAuction_Click" Margin="5" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+            <Button Content="Удалить аукцион" Click="DeleteAuction_Click" Margin="5" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+            <Button Content="Начать торги" Click="StartAuction_Click" Margin="5" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+
+            <!-- Новая кнопка для обновления списка аукционов -->
+            <Button Content="Обновить список аукционов" Click="RefreshAuctions_Click" Margin="5" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+
+            <TextBlock Text="Чат"/>
+            <ListBox x:Name="ChatBox" Height="100"/>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="ChatMessageBox" Width="200"/>
+                <Button Content="Отправить" Click="SendChat_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

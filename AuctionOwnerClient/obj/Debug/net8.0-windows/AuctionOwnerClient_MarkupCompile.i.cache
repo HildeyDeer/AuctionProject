@@ -1,0 +1,20 @@
+﻿AuctionOwnerClient
+1.0.0.0
+
+winexe
+C#
+.cs
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\
+AuctionOwnerClient
+none
+false
+TRACE;DEBUG;NET;NET8_0;NETCOREAPP
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\App.xaml
+3-1216714659
+
+8-939866896
+198155382431
+AddAuctionWindow.xaml;LoginWindow.xaml;OwnerAuctionWindow.xaml;
+
+False
+

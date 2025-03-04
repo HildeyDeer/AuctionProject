@@ -1,0 +1,25 @@
+﻿<Window x:Class="AuctionClient.AuctionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Аукцион" Height="400" Width="600">
+    <Grid>
+        <StackPanel Margin="10">
+            <TextBlock Text="Аукционы" FontSize="16"/>
+            <ListBox x:Name="AuctionList" Height="150"/>
+
+            <TextBlock Text="Сделать ставку"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="BidAmountBox" Width="100"/>
+                <Button Content="Сделать ставку" Click="Bid_Click"/>
+            </StackPanel>
+
+            <TextBlock Text="Чат"/>
+            <ListBox x:Name="ChatBox" Height="100"/>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="ChatMessageBox" Width="200"/>
+                <Button Content="Отправить" Click="SendChat_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

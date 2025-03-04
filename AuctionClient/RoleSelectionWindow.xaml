@@ -1,0 +1,12 @@
+﻿<Window x:Class="AuctionClient.RoleSelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Выбор роли" Height="200" Width="350">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="250">
+            <TextBlock Text="Выберите способ входа" FontSize="16" FontWeight="Bold" Margin="10" TextAlignment="Center"/>
+            <Button Content="Войти как пользователь" Click="OpenUserLogin" Width="250" Margin="5"/>
+            <Button Content="Войти как владелец аукциона" Click="OpenOwnerLogin" Width="250" Margin="5"/>
+        </StackPanel>
+    </Grid>
+</Window>
