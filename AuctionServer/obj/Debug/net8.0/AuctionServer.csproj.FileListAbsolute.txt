@@ -69,3 +69,4 @@ C:\Users\user\Downloads\Project TEST\Project TEST\AuctionServer\obj\Debug\net8.0
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionServer\obj\Debug\net8.0\AuctionServer.pdb
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionServer\obj\Debug\net8.0\AuctionServer.genruntimeconfig.cache
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionServer\obj\Debug\net8.0\ref\AuctionServer.dll
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionServer\obj\Debug\net8.0\AuctionServer.sourcelink.json

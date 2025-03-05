@@ -3,8 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Аукцион" Height="400" Width="600">
     <Grid>
-        <StackPanel Margin="10">
-            <TextBlock Text="Аукционы" FontSize="16"/>
+        <DockPanel LastChildFill="True">
+            <Button x:Name="ProfileButton" Content="Профиль" Click="ProfileButton_Click"
+                    HorizontalAlignment="Right" VerticalAlignment="Top" Padding="4" Margin="10"/>
+        </DockPanel>
+
+        <StackPanel Margin="10" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Аукционы" FontSize="16" RenderTransformOrigin="0.525,0.607"/>
+                <Button x:Name="RefreshButton" Content="Обновить" Click="RefreshButton_Click" 
+                        Margin="10,0,0,0"/>
+            </StackPanel>
+
             <ListBox x:Name="AuctionList" Height="150"/>
 
             <TextBlock Text="Сделать ставку"/>

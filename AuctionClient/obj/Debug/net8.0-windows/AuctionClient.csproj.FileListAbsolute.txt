@@ -28,3 +28,4 @@ C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\bin\Debug\net8.0
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\bin\Debug\net8.0-windows\AuctionOwnerClient.pdb
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\AuctionClient.csproj.AssemblyReference.cache
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\AuctionC.03A11F0D.Up2Date
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\AuctionClient.sourcelink.json

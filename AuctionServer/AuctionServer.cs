@@ -175,16 +175,18 @@ class AuctionServer
             }
 
             cmd.CommandText = "SELECT Name FROM Auctions WHERE OwnerId = @ownerId";
+            cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@ownerId", ownerId);
-            using var reader = cmd.ExecuteReader();
 
+            using var reader = cmd.ExecuteReader();
             List<string> auctions = new();
+
             while (reader.Read())
             {
                 auctions.Add(reader.GetString(0));
             }
 
-            return auctions.Count > 0 ? string.Join(";", auctions) : "EMPTY";
+            return auctions.Count > 0 ? $"AUCTIONS|{string.Join(";", auctions)}" : "AUCTIONS|EMPTY";
         }
 
 
@@ -202,13 +204,15 @@ class AuctionServer
         return "ERROR|Неизвестная команда";
     }
 
-    private static void BroadcastMessage(string message)
+    private static void BroadcastMessage(string message, TcpClient excludeClient = null)
     {
         byte[] data = Encoding.UTF8.GetBytes(message);
         List<TcpClient> disconnectedClients = new();
 
         foreach (var client in clients)
         {
+            if (client == excludeClient) continue; // Исключаем отправителя
+
             try
             {
                 client.GetStream().WriteAsync(data, 0, data.Length);

@@ -154,3 +154,4 @@ C:\Users\user\Downloads\Project TEST\Project TEST\LoadBalancer\obj\Debug\net8.0\
 C:\Users\user\Downloads\Project TEST\Project TEST\LoadBalancer\obj\Debug\net8.0\LoadBalancer.pdb
 C:\Users\user\Downloads\Project TEST\Project TEST\LoadBalancer\obj\Debug\net8.0\LoadBalancer.genruntimeconfig.cache
 C:\Users\user\Downloads\Project TEST\Project TEST\LoadBalancer\obj\Debug\net8.0\ref\LoadBalancer.dll
+C:\Users\user\Downloads\Project TEST\Project TEST\LoadBalancer\obj\Debug\net8.0\LoadBalancer.sourcelink.json

@@ -73,3 +73,4 @@ C:\Users\user\Downloads\Project TEST\Project TEST\AuthServer\obj\Debug\net8.0\re
 C:\Users\user\Downloads\Project TEST\Project TEST\AuthServer\obj\Debug\net8.0\AuthServer.pdb
 C:\Users\user\Downloads\Project TEST\Project TEST\AuthServer\obj\Debug\net8.0\AuthServer.genruntimeconfig.cache
 C:\Users\user\Downloads\Project TEST\Project TEST\AuthServer\obj\Debug\net8.0\ref\AuthServer.dll
+C:\Users\user\Downloads\Project TEST\Project TEST\AuthServer\obj\Debug\net8.0\AuthServer.sourcelink.json
