@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 class AuctionServer
 {
     private const int Port = 5001;  // Порт для аукциона
-    private const string DbPath = "C:\\Users\\user\\Downloads\\AuctionProject-main (1)\\AuctionProject-main (1)\\AuctionProject-main\\AuctionServer\\AuctionDB.db"; // Файл базы данных SQLite
+    private const string DbPath = "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionServer\\AuctionDB.db"; // Файл базы данных SQLite
     private static List<TcpClient> clients = new();
 
     public static async Task Main()

@@ -105,11 +105,15 @@ namespace AuctionClient
         {
             if (AuctionList.SelectedItem is Auction selectedAuction)
             {
-                MessageBox.Show($"Выбран аукцион: {selectedAuction.Name}\n" +
-                                $"Владелец: {selectedAuction.OwnerUsername}\n" +
-                                $"Мин. ставка: {selectedAuction.StartPrice}", "Детали аукциона");
+                var detailsWindow = new AuctionDetailsWindow(
+                    selectedAuction.Name,
+                    selectedAuction.OwnerUsername,
+                    selectedAuction.StartPrice
+                );
+                detailsWindow.Show();
             }
         }
+
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
         {

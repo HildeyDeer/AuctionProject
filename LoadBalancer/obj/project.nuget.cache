@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "x+quYOSHeSz1wPLFgTWt8Sgnq98EtUUg95KzAxmtuHaP3yXbecSyEfIU0H1VWSQTW6l6/5sRcvIuv/e46mqpqw==",
+  "dgSpecHash": "KZem7+uwrFnRolhCHXgBUl+qLppVN2SfGk2IkuajVMcBYwUFGxVO/TU7zICC/XmclyF/a5kwieMUznfOrizD7Q==",
   "success": true,
   "projectFilePath": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\LoadBalancer\\LoadBalancer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\user\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
-    "C:\\Users\\user\\.nuget\\packages\\microsoft.data.sqlite.core\\9.0.2\\microsoft.data.sqlite.core.9.0.2.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\microsoft.data.sqlite.core\\8.0.12\\microsoft.data.sqlite.core.8.0.12.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",

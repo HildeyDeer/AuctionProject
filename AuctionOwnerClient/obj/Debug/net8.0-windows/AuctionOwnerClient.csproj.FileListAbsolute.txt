@@ -22,3 +22,7 @@ C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\n
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\AuctionOwnerClient.genruntimeconfig.cache
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\ref\AuctionOwnerClient.dll
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\AuctionOwnerClient.sourcelink.json
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\bin\Debug\net8.0-windows\Microsoft.Data.Sqlite.dll
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\bin\Debug\net8.0-windows\SQLitePCLRaw.core.dll
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\AuctionOwnerClient.csproj.AssemblyReference.cache
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\AuctionO.BD4873F1.Up2Date

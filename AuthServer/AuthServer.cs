@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 class AuthServer
 {
     private const int Port = 4000;  // Порт сервера аутентификации
-    private const string DbPath = "C:\\Users\\user\\Downloads\\AuctionProject-main (1)\\AuctionProject-main (1)\\AuctionProject-main\\AuctionServer\\AuctionDB.db"; // Теперь используем объединённую базу
+    private const string DbPath = "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionServer\\AuctionDB.db"; // Теперь используем объединённую базу
 
     public static async Task Main()
     {
