@@ -1,30 +1,33 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 
 namespace AuctionClient
 {
     public partial class AuctionDetailsWindow : Window
     {
+        private string auctionId;
         private string auctionName;
-        private string owner;
-        private string startPrice;
 
-        public AuctionDetailsWindow(string auctionName, string owner, string startPrice)
+        public AuctionDetailsWindow(string name, string owner, string price, string description)
         {
             InitializeComponent();
-            this.auctionName = auctionName;
-            this.owner = owner;
-            this.startPrice = startPrice;
 
-            AuctionNameText.Text = auctionName;
-            OwnerText.Text = owner;
-            StartPriceText.Text = startPrice;
+            AuctionName.Text = name;
+            AuctionOwner.Text = owner;
+            AuctionPrice.Text = price + " $";
+            AuctionDescription.Text = description;
+
+            // Заглушка для фото
+            AuctionImage.Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("https://via.placeholder.com/200x150"));
         }
 
         private void JoinAuction_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show($"Вы присоединились к аукциону: {auctionName}");
-            Close();
+            // Закрываем текущее окно
+            //this.Close();
+
+            // Открываем окно активного аукциона
+            //AuctionActiveWindow activeAuction = new AuctionActiveWindow(auctionId, auctionName);
+            //activeAuction.Show();
         }
     }
 }

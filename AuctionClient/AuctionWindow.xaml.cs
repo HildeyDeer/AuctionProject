@@ -25,13 +25,15 @@ namespace AuctionClient
             ProfileButton.Content = $"Профиль ({username})";
             ConnectToServer();
 
-            // Таймер для обновления списка аукционов
-            auctionUpdateTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(2)
-            };
-            auctionUpdateTimer.Tick += async (s, e) => await RequestAuctions();
-            auctionUpdateTimer.Start();
+            //Таймер для обновления списка аукционов
+
+
+           //auctionUpdateTimer = new DispatcherTimer
+           //{
+           //    Interval = TimeSpan.FromSeconds(2)
+           //};
+           // auctionUpdateTimer.Tick += async (s, e) => await RequestAuctions();
+           // auctionUpdateTimer.Start();
         }
 
         private async void ConnectToServer()
@@ -101,18 +103,45 @@ namespace AuctionClient
             }
         }
 
-        private void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (AuctionList.SelectedItem is Auction selectedAuction)
             {
-                var detailsWindow = new AuctionDetailsWindow(
-                    selectedAuction.Name,
-                    selectedAuction.OwnerUsername,
-                    selectedAuction.StartPrice
-                );
-                detailsWindow.Show();
+                string request = $"GET_AUCTION_DETAILS|{selectedAuction.Name}";
+                byte[] data = Encoding.UTF8.GetBytes(request);
+
+                await stream.WriteAsync(data, 0, data.Length);
+                await stream.FlushAsync();
+
+                byte[] buffer = new byte[4096]; // Буфер для ответа
+                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+                string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+                if (response.StartsWith("AUCTION_DETAILS"))
+                {
+                    string[] parts = response.Split('|');
+                    if (parts.Length == 6)
+                    {
+                        string name = parts[1];
+                        string owner = parts[2];
+                        string startPrice = parts[3];
+                        string description = parts[4];
+                        string status = parts[5];
+
+                        AuctionDetailsWindow detailsWindow = new AuctionDetailsWindow(
+                            name, owner, startPrice, description
+                        );
+                        detailsWindow.Show();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка при получении данных аукциона", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
+
+
 
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
@@ -127,9 +156,13 @@ namespace AuctionClient
 
         private class Auction
         {
+            
             public string Name { get; set; }
             public string OwnerUsername { get; set; }
             public string StartPrice { get; set; }
+            public string Description { get; set; }
+            public string Category { get; set; }
+            public string status { get; set; }
         }
     }
 }
