@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 class AuctionServer
 {
     private const int Port = 5001;  // Порт для аукциона
-    private const string DbPath = "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionServer\\AuctionDB.db"; // Файл базы данных SQLite
+    private const string DbPath = "C:\\Users\\user\\Downloads\\AuctionProject-main (1)\\AuctionProject-main (1)\\AuctionProject-main\\AuctionServer\\AuctionDB.db"; // Файл базы данных SQLite
     private static List<TcpClient> clients = new();
 
     public static async Task Main()
     {
         InitDatabase(); // Создание базы данных при старте
-        TcpListener listener = new TcpListener(IPAddress.Any, Port);
+        TcpListener listener = new TcpListener(IPAddress.Parse("127.0.0.1"), Port);
         listener.Start();
         Console.WriteLine($"Auction Server запущен на порту {Port}");
 
@@ -93,9 +93,41 @@ class AuctionServer
     private static string ProcessRequest(string request)
     {
         string[] parts = request.Split('|');
-        if (parts.Length < 2) return "ERROR|Неверный формат запроса";
-
         string command = parts[0];
+
+        // Обработка команды GET_AUCTIONS отдельно
+        if (command == "GET_AUCTIONS")
+        {
+            if (parts.Length != 1) // Для GET_AUCTIONS только один параметр
+            {
+                return "ERROR|Неверный формат запроса";
+            }
+
+            using var conn1 = new SQLiteConnection($"Data Source={DbPath};Version=3;");
+            conn1.Open();
+            using var cmd1 = new SQLiteCommand(conn1);
+
+            cmd1.CommandText = "SELECT A.Name, O.Username, A.StartPrice FROM Auctions A JOIN Owners O ON A.OwnerId = O.Id WHERE A.Status = 'Pending'";
+
+            using var reader = cmd1.ExecuteReader();
+            List<string> auctions = new();
+
+            while (reader.Read())
+            {
+                string name = reader.GetString(0);
+                string owner = reader.GetString(1);
+                double startPrice = reader.GetDouble(2);
+                auctions.Add($"{name},{owner},{startPrice}");
+            }
+
+            return auctions.Count > 0 ? $"AUCTIONS|{string.Join(";", auctions)}" : "AUCTIONS|EMPTY";
+        }
+
+        // Для других команд
+        if (parts.Length < 2)
+        {
+            return "ERROR|Неверный формат запроса";
+        }
 
         using var conn = new SQLiteConnection($"Data Source={DbPath};Version=3;");
         conn.Open();
@@ -167,29 +199,6 @@ class AuctionServer
             }
         }
 
-        if (command == "GET_AUCTIONS" && parts.Length == 2)
-        {
-            if (!int.TryParse(parts[1], out int ownerId))
-            {
-                return "ERROR|Некорректный ID владельца";
-            }
-
-            cmd.CommandText = "SELECT Name FROM Auctions WHERE OwnerId = @ownerId";
-            cmd.Parameters.Clear();
-            cmd.Parameters.AddWithValue("@ownerId", ownerId);
-
-            using var reader = cmd.ExecuteReader();
-            List<string> auctions = new();
-
-            while (reader.Read())
-            {
-                auctions.Add(reader.GetString(0));
-            }
-
-            return auctions.Count > 0 ? $"AUCTIONS|{string.Join(";", auctions)}" : "AUCTIONS|EMPTY";
-        }
-
-
         // Обработка сообщений в чате (с префиксом владельца, если это владелец)
         if (command == "CHAT" && parts.Length == 4)
         {
@@ -203,6 +212,7 @@ class AuctionServer
 
         return "ERROR|Неизвестная команда";
     }
+
 
     private static void BroadcastMessage(string message, TcpClient excludeClient = null)
     {

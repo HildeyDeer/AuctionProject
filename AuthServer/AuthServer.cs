@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 class AuthServer
 {
     private const int Port = 4000;  // Порт сервера аутентификации
-    private const string DbPath = "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionServer\\AuctionDB.db"; // Теперь используем объединённую базу
+    private const string DbPath = "C:\\Users\\user\\Downloads\\AuctionProject-main (1)\\AuctionProject-main (1)\\AuctionProject-main\\AuctionServer\\AuctionDB.db"; // Теперь используем объединённую базу
 
     public static async Task Main()
     {
-        TcpListener listener = new TcpListener(IPAddress.Any, Port);
+        TcpListener listener = new TcpListener(IPAddress.Parse("127.0.0.1"), Port);
         listener.Start();
         Console.WriteLine($"Auth Server запущен на порту {Port}");
 

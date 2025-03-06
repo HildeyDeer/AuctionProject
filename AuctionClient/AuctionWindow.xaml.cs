@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace AuctionClient
@@ -23,7 +25,7 @@ namespace AuctionClient
             ProfileButton.Content = $"Профиль ({username})";
             ConnectToServer();
 
-            // Запуск таймера обновления списка аукционов
+            // Таймер для обновления списка аукционов
             auctionUpdateTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromSeconds(2)
@@ -41,7 +43,7 @@ namespace AuctionClient
                 stream = client.GetStream();
                 ListenForMessages();
 
-                // Первоначальное обновление списка аукционов
+                // Первое обновление аукционов
                 await RequestAuctions();
             }
             catch (Exception ex)
@@ -54,7 +56,7 @@ namespace AuctionClient
         {
             if (stream == null) return;
 
-            string request = "GET_AUCTIONS|1";
+            string request = "GET_AUCTIONS";
             byte[] data = Encoding.UTF8.GetBytes(request);
             await stream.WriteAsync(data, 0, data.Length);
         }
@@ -69,12 +71,7 @@ namespace AuctionClient
 
                 string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
-                // Фильтрация сообщений
-                if (message.StartsWith("CHAT") || message.StartsWith("BID_UPDATE"))
-                {
-                    Dispatcher.Invoke(() => ChatBox.Items.Add(message));
-                }
-                else if (message.StartsWith("AUCTIONS"))
+                if (message.StartsWith("AUCTIONS"))
                 {
                     string[] parts = message.Split('|');
                     if (parts.Length > 1)
@@ -86,7 +83,16 @@ namespace AuctionClient
                             {
                                 foreach (string auction in parts[1].Split(';'))
                                 {
-                                    AuctionList.Items.Add(auction);
+                                    string[] details = auction.Split(',');
+                                    if (details.Length == 3)
+                                    {
+                                        AuctionList.Items.Add(new Auction
+                                        {
+                                            Name = details[0],
+                                            OwnerUsername = details[1],
+                                            StartPrice = details[2]
+                                        });
+                                    }
                                 }
                             }
                         });
@@ -95,32 +101,14 @@ namespace AuctionClient
             }
         }
 
-        private async void Bid_Click(object sender, RoutedEventArgs e)
+        private void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string bidAmount = BidAmountBox.Text;
-            if (string.IsNullOrWhiteSpace(bidAmount)) return;
-
-            if (!double.TryParse(bidAmount, out double bidValue))
+            if (AuctionList.SelectedItem is Auction selectedAuction)
             {
-                MessageBox.Show("Введите корректную сумму.");
-                return;
+                MessageBox.Show($"Выбран аукцион: {selectedAuction.Name}\n" +
+                                $"Владелец: {selectedAuction.OwnerUsername}\n" +
+                                $"Мин. ставка: {selectedAuction.StartPrice}", "Детали аукциона");
             }
-
-            string bidMessage = $"BID|1|{username}|{bidValue}"; // ID аукциона замените на актуальный
-            byte[] data = Encoding.UTF8.GetBytes(bidMessage);
-            await stream.WriteAsync(data, 0, data.Length);
-            BidAmountBox.Clear();
-        }
-
-        private async void SendChat_Click(object sender, RoutedEventArgs e)
-        {
-            string message = ChatMessageBox.Text;
-            if (string.IsNullOrWhiteSpace(message)) return;
-
-            string chatMessage = $"CHAT|{username}|USER|{message}";
-            byte[] data = Encoding.UTF8.GetBytes(chatMessage);
-            await stream.WriteAsync(data, 0, data.Length);
-            ChatMessageBox.Clear();
         }
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
@@ -133,5 +121,11 @@ namespace AuctionClient
             _ = RequestAuctions();
         }
 
+        private class Auction
+        {
+            public string Name { get; set; }
+            public string OwnerUsername { get; set; }
+            public string StartPrice { get; set; }
+        }
     }
 }

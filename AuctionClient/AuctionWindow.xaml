@@ -1,35 +1,36 @@
 ﻿<Window x:Class="AuctionClient.AuctionWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Аукцион" Height="400" Width="600">
+        Title="Аукционы" Height="400" Width="600">
     <Grid>
+        <!-- Верхняя панель с кнопкой профиля -->
         <DockPanel LastChildFill="True">
             <Button x:Name="ProfileButton" Content="Профиль" Click="ProfileButton_Click"
                     HorizontalAlignment="Right" VerticalAlignment="Top" Padding="4" Margin="10"/>
         </DockPanel>
 
         <StackPanel Margin="10" VerticalAlignment="Center">
+            <!-- Заголовок и кнопка обновления -->
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Аукционы" FontSize="16" RenderTransformOrigin="0.525,0.607"/>
+                <TextBlock Text="Аукционы" FontSize="16" FontWeight="Bold"/>
                 <Button x:Name="RefreshButton" Content="Обновить" Click="RefreshButton_Click" 
                         Margin="10,0,0,0"/>
             </StackPanel>
 
-            <ListBox x:Name="AuctionList" Height="150"/>
-
-            <TextBlock Text="Сделать ставку"/>
-            <StackPanel Orientation="Horizontal">
-                <TextBox x:Name="BidAmountBox" Width="100"/>
-                <Button Content="Сделать ставку" Click="Bid_Click"/>
-            </StackPanel>
-
-            <TextBlock Text="Чат"/>
-            <ListBox x:Name="ChatBox" Height="100"/>
-
-            <StackPanel Orientation="Horizontal">
-                <TextBox x:Name="ChatMessageBox" Width="200"/>
-                <Button Content="Отправить" Click="SendChat_Click"/>
-            </StackPanel>
+            <!-- Список аукционов -->
+            <ListBox x:Name="AuctionList" Height="200" SelectionChanged="AuctionList_SelectionChanged" ItemsSource="{Binding AuctionsList}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Width="150"/>
+                            <TextBlock Text="Владелец: " FontWeight="Bold"/>
+                            <TextBlock Text="{Binding OwnerUsername}" Width="100"/>
+                            <TextBlock Text="Мин. ставка: " FontWeight="Bold"/>
+                            <TextBlock Text="{Binding StartPrice}" Foreground="Green"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </StackPanel>
     </Grid>
 </Window>
