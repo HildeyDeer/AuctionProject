@@ -52,15 +52,18 @@ class AuctionServer
 
         // Таблица аукционов
         cmd.CommandText = @"CREATE TABLE IF NOT EXISTS Auctions (
-                                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                OwnerId INTEGER NOT NULL,
-                                Name TEXT NOT NULL,
-                                Description TEXT,
-                                StartPrice REAL NOT NULL,
-                                Status TEXT DEFAULT 'Pending',
-                                FOREIGN KEY (OwnerId) REFERENCES Owners(Id)
-                            );";
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        OwnerId INTEGER NOT NULL,
+                        Name TEXT NOT NULL,
+                        Description TEXT,
+                        StartPrice REAL NOT NULL,
+                        Category TEXT NOT NULL,
+                        EndTime DATETIME NOT NULL,
+                        Status TEXT DEFAULT 'Pending',
+                        FOREIGN KEY (OwnerId) REFERENCES Owners(Id)
+                    );";
         cmd.ExecuteNonQuery();
+
     }
 
     private static async Task HandleClient(TcpClient client)
@@ -98,7 +101,8 @@ class AuctionServer
         // Обработка команды GET_AUCTIONS отдельно
         if (command == "GET_AUCTIONS")
         {
-            if (parts.Length != 1) // Для GET_AUCTIONS только один параметр
+            // Проверяем, что не передаются параметры
+            if (parts.Length != 1)
             {
                 return "ERROR|Неверный формат запроса";
             }
@@ -107,7 +111,10 @@ class AuctionServer
             conn1.Open();
             using var cmd1 = new SQLiteCommand(conn1);
 
-            cmd1.CommandText = "SELECT A.Name, O.Username, A.StartPrice FROM Auctions A JOIN Owners O ON A.OwnerId = O.Id WHERE A.Status = 'Pending'";
+            cmd1.CommandText = @"SELECT A.Name, O.Username, A.StartPrice, A.Category, A.EndTime 
+                         FROM Auctions A 
+                         JOIN Owners O ON A.OwnerId = O.Id 
+                         WHERE A.Status = 'Pending'";
 
             using var reader = cmd1.ExecuteReader();
             List<string> auctions = new();
@@ -117,7 +124,10 @@ class AuctionServer
                 string name = reader.GetString(0);
                 string owner = reader.GetString(1);
                 double startPrice = reader.GetDouble(2);
-                auctions.Add($"{name},{owner},{startPrice}");
+                string category = reader.GetString(3);
+                string endTime = reader.GetString(4);
+
+                auctions.Add($"{name},{owner},{startPrice},{category},{endTime}");
             }
 
             return auctions.Count > 0 ? $"AUCTIONS|{string.Join(";", auctions)}" : "AUCTIONS|EMPTY";
@@ -132,6 +142,35 @@ class AuctionServer
         using var conn = new SQLiteConnection($"Data Source={DbPath};Version=3;");
         conn.Open();
         using var cmd = new SQLiteCommand(conn);
+
+        // Запрос деталей аукциона (по названию)
+        if (command == "GET_AUCTION_DETAILS" && parts.Length == 2)
+        {
+            string auctionName = parts[1];
+
+            cmd.CommandText = @"SELECT A.Name, O.Username, A.StartPrice, A.Description, A.Category, A.EndTime, A.Status
+                    FROM Auctions A 
+                    JOIN Owners O ON A.OwnerId = O.Id 
+                    WHERE A.Name = @name";
+            cmd.Parameters.AddWithValue("@name", auctionName);
+
+            using var reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                string name = reader.GetString(0);
+                string owner = reader.GetString(1);
+                double startPrice = reader.GetDouble(2);
+                string description = reader.IsDBNull(3) ? "Нет описания" : reader.GetString(3);
+                string category = reader.GetString(4);
+                string endTime = reader.GetString(5);
+                string status = reader.GetString(6);
+
+                return $"AUCTION_DETAILS|{name}|{owner}|{startPrice}|{description}|{category}|{endTime}|{status}";
+            }
+
+            return "ERROR|Аукцион не найден";
+        }
 
         // Обработка ставки
         if (command == "BID" && parts.Length == 4)

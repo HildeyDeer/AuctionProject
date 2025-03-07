@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace AuctionClient
@@ -85,7 +86,7 @@ namespace AuctionClient
 
         private async void ListenForMessages()
         {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[4096];
             while (true)
             {
                 int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
@@ -106,13 +107,15 @@ namespace AuctionClient
                                 foreach (string auction in parts[1].Split(';'))
                                 {
                                     string[] details = auction.Split(',');
-                                    if (details.Length == 3)
+                                    if (details.Length == 5)
                                     {
                                         AuctionList.Items.Add(new Auction
                                         {
                                             Name = details[0],
                                             OwnerUsername = details[1],
-                                            StartPrice = details[2]
+                                            StartPrice = details[2] + " $",
+                                            Category = details[3],
+                                            EndTime = details[4]
                                         });
                                     }
                                 }
@@ -122,6 +125,7 @@ namespace AuctionClient
                 }
             }
         }
+
 
         private async void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -140,17 +144,19 @@ namespace AuctionClient
                 if (response.StartsWith("AUCTION_DETAILS"))
                 {
                     string[] parts = response.Split('|');
-                    if (parts.Length == 6)
+                    if (parts.Length == 8)
                     {
                         string name = parts[1];
                         string owner = parts[2];
                         string startPrice = parts[3];
                         string description = parts[4];
-                        string status = parts[5];
+                        string category = parts[5];
+                        string endTime = parts[6];
+                        string status = parts[7];
 
                         AuctionDetailsWindow detailsWindow = new AuctionDetailsWindow(
-                            name, owner, startPrice, description
-                        );
+                               name, owner, startPrice, description, category, endTime
+                           );
                         detailsWindow.Show();
                     }
                 }
@@ -160,8 +166,6 @@ namespace AuctionClient
                 }
             }
         }
-
-
 
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
@@ -176,13 +180,12 @@ namespace AuctionClient
 
         private class Auction
         {
-
             public string Name { get; set; }
             public string OwnerUsername { get; set; }
             public string StartPrice { get; set; }
-            public string Description { get; set; }
             public string Category { get; set; }
-            public string status { get; set; }
+            public string EndTime { get; set; } // Время окончания
+            public string Status { get; set; }  // Статус аукциона
         }
     }
 }

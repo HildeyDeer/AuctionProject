@@ -5,7 +5,6 @@
     <Window.Resources>
         <!-- Стиль для кнопок с округлыми углами и тенями -->
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
-
             <Setter Property="Padding" Value="10"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -28,8 +27,6 @@
         <Style x:Key="AuctionListItemStyle" TargetType="StackPanel">
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Background" Value="#F7F7F7"/>
-
-
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect Color="#888888" Direction="270" ShadowDepth="2" Opacity="0.1" BlurRadius="5"/>
@@ -56,8 +53,7 @@
             </StackPanel>
 
             <!-- Список аукционов -->
-            <ListBox x:Name="AuctionList" Height="200" SelectionChanged="AuctionList_SelectionChanged" 
-                     ItemsSource="{Binding AuctionsList}" Margin="10">
+                <ListBox x:Name="AuctionList" Height="200" SelectionChanged="AuctionList_SelectionChanged" ItemsSource="{Binding AuctionsList}" Margin="10">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Style="{StaticResource AuctionListItemStyle}">

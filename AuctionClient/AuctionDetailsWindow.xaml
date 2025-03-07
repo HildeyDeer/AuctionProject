@@ -22,7 +22,10 @@
 
                 <TextBlock Text="Минимальная ставка:" FontWeight="Bold" FontSize="16" Foreground="#555555"/>
                 <TextBlock x:Name="AuctionPrice" FontSize="14" Margin="0,0,0,15" Foreground="#777777"/>
-
+                
+                <TextBlock Text="Окончание:" FontWeight="Bold" FontSize="16" Foreground="#555555"/>
+                <TextBlock x:Name="AuctionEndTime" FontSize="14" Margin="0,0,0,15" Foreground="#777777"/>
+                
                 <TextBlock Text="Описание:" FontWeight="Bold" FontSize="16" Foreground="#555555"/>
                 <ScrollViewer Height="100" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                     <TextBlock x:Name="AuctionDescription" TextWrapping="Wrap" FontSize="14" Foreground="#555555"/>
