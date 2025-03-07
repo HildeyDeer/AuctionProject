@@ -27,13 +27,14 @@ namespace AuctionClient
 
             //Таймер для обновления списка аукционов
 
+            _ = Task.Run(() => RequestAuctions());
 
-           //auctionUpdateTimer = new DispatcherTimer
-           //{
-           //    Interval = TimeSpan.FromSeconds(2)
-           //};
-           // auctionUpdateTimer.Tick += async (s, e) => await RequestAuctions();
-           // auctionUpdateTimer.Start();
+            //auctionUpdateTimer = new DispatcherTimer
+            //{
+            //    Interval = TimeSpan.FromSeconds(2)
+            //};
+            //auctionUpdateTimer.Tick += async (s, e) => await RequestAuctions();
+            //auctionUpdateTimer.Start();
         }
 
         private async void ConnectToServer()
@@ -56,6 +57,25 @@ namespace AuctionClient
 
         private async Task RequestAuctions()
         {
+
+            if (stream == null) return;
+
+            string request = "GET_AUCTIONS";
+            byte[] data = Encoding.UTF8.GetBytes(request);
+
+            while (true)
+            {
+                await stream.WriteAsync(data, 0, data.Length);
+                Console.WriteLine("Request sent at: " + DateTime.Now);
+
+                // Задержка 30 секунд
+                await Task.Delay(30000); // 30000 миллисекунд = 30 секунд
+            }
+        }
+
+        private async Task ManualRequestAuctions()
+        {
+
             if (stream == null) return;
 
             string request = "GET_AUCTIONS";
@@ -151,12 +171,12 @@ namespace AuctionClient
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            _ = RequestAuctions();
+            _ = ManualRequestAuctions();
         }
 
         private class Auction
         {
-            
+
             public string Name { get; set; }
             public string OwnerUsername { get; set; }
             public string StartPrice { get; set; }

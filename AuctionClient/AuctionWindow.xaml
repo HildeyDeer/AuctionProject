@@ -1,28 +1,67 @@
 ﻿<Window x:Class="AuctionClient.AuctionWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Аукционы" Height="400" Width="600">
+        Title="Аукционы" Height="400" Width="600" Background="#F1F1F1">
+    <Window.Resources>
+        <!-- Стиль для кнопок с округлыми углами и тенями -->
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000000" Direction="270" ShadowDepth="4" Opacity="0.2" BlurRadius="4"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для текста в заголовках -->
+        <Style x:Key="BoldTextStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="#333333"/>
+        </Style>
+
+        <!-- Стиль для списка аукционов -->
+        <Style x:Key="AuctionListItemStyle" TargetType="StackPanel">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Background" Value="#F7F7F7"/>
+
+
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#888888" Direction="270" ShadowDepth="2" Opacity="0.1" BlurRadius="5"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <!-- Верхняя панель с кнопкой профиля -->
         <DockPanel LastChildFill="True">
             <Button x:Name="ProfileButton" Content="Профиль" Click="ProfileButton_Click"
-                    HorizontalAlignment="Right" VerticalAlignment="Top" Padding="4" Margin="10"/>
+                    HorizontalAlignment="Right" VerticalAlignment="Top" Padding="10" Margin="10"
+                    Background="#007ACC" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
         </DockPanel>
 
         <StackPanel Margin="10" VerticalAlignment="Center">
             <!-- Заголовок и кнопка обновления -->
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Аукционы" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Text="Аукционы" Style="{StaticResource BoldTextStyle}" Margin="10,0"/>
                 <Button x:Name="RefreshButton" Content="Обновить" Click="RefreshButton_Click" 
-                        Margin="10,0,0,0"/>
+                        Margin="10,0,0,0" Padding="10,5" Background="#FF5722" Foreground="White"
+                        Style="{StaticResource RoundedButtonStyle}"/>
             </StackPanel>
 
             <!-- Список аукционов -->
-            <ListBox x:Name="AuctionList" Height="200" SelectionChanged="AuctionList_SelectionChanged" ItemsSource="{Binding AuctionsList}">
+            <ListBox x:Name="AuctionList" Height="200" SelectionChanged="AuctionList_SelectionChanged" 
+                     ItemsSource="{Binding AuctionsList}" Margin="10">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Margin="5">
-                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Width="150"/>
+                        <StackPanel Orientation="Horizontal" Style="{StaticResource AuctionListItemStyle}">
+                            <TextBlock Text="{Binding Name}" Width="150"/>
                             <TextBlock Text="Владелец: " FontWeight="Bold"/>
                             <TextBlock Text="{Binding OwnerUsername}" Width="100"/>
                             <TextBlock Text="Мин. ставка: " FontWeight="Bold"/>
