@@ -146,6 +146,7 @@ namespace AuctionClient
                     string[] parts = response.Split('|');
                     if (parts.Length == 8)
                     {
+
                         string name = parts[1];
                         string owner = parts[2];
                         string startPrice = parts[3];

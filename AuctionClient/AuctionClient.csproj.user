@@ -7,6 +7,9 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="AuctionActiveWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="AuctionDetailsWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -18,6 +21,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="AuctionActiveWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="AuctionDetailsWindow.xaml">
       <SubType>Designer</SubType>
     </Page>

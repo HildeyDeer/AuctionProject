@@ -33,3 +33,5 @@ C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\bin\Debug\net8.0
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\bin\Debug\net8.0-windows\SQLitePCLRaw.core.dll
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\AuctionDetailsWindow.baml
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\AuctionDetailsWindow.g.cs
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\AuctionActiveWindow.baml
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\AuctionActiveWindow.g.cs

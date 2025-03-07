@@ -158,6 +158,7 @@ class AuctionServer
 
             if (reader.Read())
             {
+                
                 string name = reader.GetString(0);
                 string owner = reader.GetString(1);
                 double startPrice = reader.GetDouble(2);
@@ -165,6 +166,7 @@ class AuctionServer
                 string category = reader.GetString(4);
                 string endTime = reader.GetString(5);
                 string status = reader.GetString(6);
+
 
                 return $"AUCTION_DETAILS|{name}|{owner}|{startPrice}|{description}|{category}|{endTime}|{status}";
             }
@@ -175,16 +177,33 @@ class AuctionServer
         // Обработка ставки
         if (command == "BID" && parts.Length == 4)
         {
-            int auctionId = int.Parse(parts[1]);
+            string auctionName = parts[1]; // Исправлено: теперь строка
             string username = parts[2];
             double bidAmount = double.Parse(parts[3]);
 
-            cmd.CommandText = "UPDATE Auctions SET StartPrice = @bid WHERE Id = @id";
+            // Обновляем ставку в базе данных
+            cmd.CommandText = "UPDATE Auctions SET StartPrice = @bid WHERE Name = @name";
             cmd.Parameters.AddWithValue("@bid", bidAmount);
-            cmd.Parameters.AddWithValue("@id", auctionId);
+            cmd.Parameters.AddWithValue("@name", auctionName);
             cmd.ExecuteNonQuery();
 
-            return $"BID_UPDATE|{auctionId}|{username}|{bidAmount}";
+            // Получаем обновленные данные из БД
+            cmd.CommandText = "SELECT StartPrice FROM Auctions WHERE Name = @name";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@name", auctionName);
+            object newBidObj = cmd.ExecuteScalar();
+
+            if (newBidObj != null)
+            {
+                double newBid = Convert.ToDouble(newBidObj);
+                string bidResponse = $"BID_UPDATE|{auctionName}|{username}|{newBid}";
+                BroadcastMessage(bidResponse); // Рассылаем обновленные данные клиентам
+                return bidResponse;
+            }
+            else
+            {
+                return "ERROR|Аукцион не найден";
+            }
         }
 
         if (command == "GET_OWNER_ID" && parts.Length == 2)
@@ -253,18 +272,18 @@ class AuctionServer
     }
 
 
-    private static void BroadcastMessage(string message, TcpClient excludeClient = null)
+    private static async void BroadcastMessage(string message, TcpClient excludeClient = null)
     {
         byte[] data = Encoding.UTF8.GetBytes(message);
         List<TcpClient> disconnectedClients = new();
 
         foreach (var client in clients)
         {
-            if (client == excludeClient) continue; // Исключаем отправителя
+            if (client == excludeClient) continue;
 
             try
             {
-                client.GetStream().WriteAsync(data, 0, data.Length);
+                await client.GetStream().WriteAsync(data, 0, data.Length);
             }
             catch
             {
@@ -272,10 +291,10 @@ class AuctionServer
             }
         }
 
-        // Удаляем отключившихся клиентов
         foreach (var client in disconnectedClients)
         {
             clients.Remove(client);
         }
     }
+
 }

@@ -6,17 +6,22 @@ namespace AuctionClient
     {
         private string auctionId;
         private string auctionName;
+        private string username;
+        private string auctionOwner;
 
         public AuctionDetailsWindow(string name, string owner, string price, string description, string category, string endTime)
         {
             InitializeComponent();
 
+            this.username = username;  // Сохраняем имя пользователя
+            this.auctionOwner = owner; // Сохраняем владельца аукциона
+
             AuctionName.Text = name;
             AuctionOwner.Text = owner;
             AuctionPrice.Text = price + " $";
             AuctionDescription.Text = description;
-            AuctionCategory.Text = "Категория: " + category;
-            AuctionEndTime.Text = "Окончание: " + endTime;
+            AuctionCategory.Text = category;
+            AuctionEndTime.Text = endTime;
 
             // Заглушка для фото
             AuctionImage.Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("https://geauction.com/wp-content/uploads/2018/07/5-Auction-Tips-for-Beginners2.jpg"));
@@ -25,12 +30,14 @@ namespace AuctionClient
 
         private void JoinAuction_Click(object sender, RoutedEventArgs e)
         {
-            // Закрываем текущее окно
-            //this.Close();
+            bool isOwner = username == auctionOwner; // Проверяем, является ли пользователь владельцем
 
-            // Открываем окно активного аукциона
-            //AuctionActiveWindow activeAuction = new AuctionActiveWindow(auctionId, auctionName);
-            //activeAuction.Show();
+            AuctionActiveWindow activeAuction = new AuctionActiveWindow(
+                username, AuctionName.Text, AuctionOwner.Text, AuctionPrice.Text, AuctionEndTime.Text, isOwner
+            );
+            activeAuction.Show();
         }
+
+
     }
 }

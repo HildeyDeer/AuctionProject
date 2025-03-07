@@ -1,0 +1,83 @@
+﻿<Window x:Class="AuctionClient.AuctionActiveWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Текущий аукцион" Height="500" Width="600" Background="#F1F1F1">
+    <Window.Resources>
+        <!-- Стиль для кнопок с округлыми углами и тенями -->
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000000" Direction="270" ShadowDepth="4" Opacity="0.2" BlurRadius="4"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для текста в заголовках -->
+        <Style x:Key="BoldTextStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="#333333"/>
+        </Style>
+
+        <!-- Стиль для списка аукционов -->
+        <Style x:Key="AuctionListItemStyle" TargetType="StackPanel">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Background" Value="#F7F7F7"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#888888" Direction="270" ShadowDepth="2" Opacity="0.1" BlurRadius="5"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <!-- Верхняя панель с кнопкой профиля -->
+        <DockPanel LastChildFill="True">
+            <Button x:Name="ProfileButton" Content="Профиль" Click="ProfileButton_Click"
+                    HorizontalAlignment="Right" VerticalAlignment="Top" Padding="10" Margin="10"
+                    Background="#007ACC" Foreground="White" Style="{StaticResource RoundedButtonStyle}"/>
+        </DockPanel>
+
+        <StackPanel Margin="10" VerticalAlignment="Center">
+            <!-- Заголовок аукциона -->
+            <TextBlock Name="AuctionTitle" FontSize="20" FontWeight="Bold" 
+                       HorizontalAlignment="Center" Margin="10"/>
+
+            <!-- Таймер -->
+            <TextBlock Name="TimerText" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold" Margin="5"/>
+
+            <!-- Текущая ставка -->
+            <TextBlock Name="CurrentBidText" FontSize="16" FontWeight="Bold"
+                       HorizontalAlignment="Center" Foreground="Black" Margin="5"/>
+
+            <!-- Чат -->
+            <ListBox Name="ChatBox" Margin="10" Height="150">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" FontSize="14" Foreground="#333333"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- Ввод для чата -->
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <TextBox Name="ChatInput" Width="400" Margin="5"/>
+                <Button Name="SendChatButton" Content="Отправить" Width="80" 
+                        Style="{StaticResource RoundedButtonStyle}" Click="SendChatButton_Click"/>
+            </StackPanel>
+
+            <!-- Поле для ставки -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                <TextBlock Text="Ставка ($): " FontWeight="Bold"/>
+                <TextBox Name="BidAmount" Width="100" Margin="5"/>
+                <Button Name="PlaceBidButton" Content="Сделать ставку" Width="120" 
+                        Style="{StaticResource RoundedButtonStyle}" Click="PlaceBidButton_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
