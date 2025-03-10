@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace AuctionClient
@@ -21,23 +22,30 @@ namespace AuctionClient
         private DispatcherTimer countdownTimer;
         private DateTime auctionEndTime;
         private bool isOwner;
+        private string lastBidder; // Имя последнего, кто сделал ставку
+        private string auctionDescription;
+        private string auctionImageUrl;
 
-        public AuctionActiveWindow(string username, string auctionName, string owner, string startPrice, string endTime, bool isOwner)
+        public AuctionActiveWindow(string username, string auctionName, string owner, string startPrice, string endTime, bool isOwner, string description, string imageUrl)
         {
             InitializeComponent();
-            this.username = username;  // Сохраняем имя пользователя
+            this.username = username;
             this.auctionName = auctionName;
             this.currentBid = int.Parse(startPrice.Replace(" $", ""));
             this.isOwner = isOwner;
+            this.auctionDescription = description;
+            this.auctionImageUrl = imageUrl;
 
-            // Подключение к серверу
+            AuctionTitle.Text = auctionName;
+            AuctionOwner.Text = $"Владелец: {owner}";
+            AuctionDescription.Text = description;
+            AuctionImage.Source = new BitmapImage(new Uri(imageUrl));
+
             _ = Task.Run(ConnectToServer);
 
-            // Настройка таймера
             auctionEndTime = DateTime.Parse(endTime);
             StartCountdownTimer();
 
-            // Устанавливаем имя пользователя в кнопке профиля
             ProfileButton.Content = $"Профиль ({username})";
         }
 
@@ -89,7 +97,8 @@ namespace AuctionClient
                         if (parts.Length == 4 && parts[1] == auctionName && double.TryParse(parts[3], out double newBid))
                         {
                             currentBid = (int)newBid;
-                            CurrentBidText.Text = $"{currentBid} $";
+                            lastBidder = parts[2]; // Получаем имя последнего поставившего
+                            CurrentBidText.Text = $"Текущая ставка: {currentBid} $ от {lastBidder}";
                         }
                     }
                     else if (message.StartsWith("CHAT"))
@@ -134,5 +143,7 @@ namespace AuctionClient
         {
             MessageBox.Show($"Открытие профиля пользователя {username} (заглушка)");
         }
+
+
     }
 }

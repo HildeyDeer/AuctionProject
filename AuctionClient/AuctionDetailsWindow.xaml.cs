@@ -29,10 +29,10 @@ namespace AuctionClient
 
         private void JoinAuction_Click(object sender, RoutedEventArgs e)
         {
-            bool isOwner = username == auctionOwner; // Проверяем, является ли пользователь владельцем
-
+            bool isOwner = username == auctionOwner;
             AuctionActiveWindow activeAuction = new AuctionActiveWindow(
-                username, AuctionName.Text, AuctionOwner.Text, AuctionPrice.Text, AuctionEndTime.Text, isOwner
+                username, AuctionName.Text, AuctionOwner.Text, AuctionPrice.Text, AuctionEndTime.Text, isOwner,
+                AuctionDescription.Text, AuctionImage.Source.ToString()
             );
             activeAuction.Show();
         }
