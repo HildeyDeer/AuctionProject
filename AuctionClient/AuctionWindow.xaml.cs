@@ -146,7 +146,6 @@ namespace AuctionClient
                     string[] parts = response.Split('|');
                     if (parts.Length == 8)
                     {
-
                         string name = parts[1];
                         string owner = parts[2];
                         string startPrice = parts[3];
@@ -155,9 +154,10 @@ namespace AuctionClient
                         string endTime = parts[6];
                         string status = parts[7];
 
+                        // Создаем окно деталей аукциона, передавая username
                         AuctionDetailsWindow detailsWindow = new AuctionDetailsWindow(
-                               name, owner, startPrice, description, category, endTime
-                           );
+                            name, owner, startPrice, description, category, endTime, username
+                        );
                         detailsWindow.Show();
                     }
                 }
@@ -167,6 +167,8 @@ namespace AuctionClient
                 }
             }
         }
+
+
 
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)

@@ -25,7 +25,7 @@ namespace AuctionClient
         public AuctionActiveWindow(string username, string auctionName, string owner, string startPrice, string endTime, bool isOwner)
         {
             InitializeComponent();
-            this.username = username;
+            this.username = username;  // Сохраняем имя пользователя
             this.auctionName = auctionName;
             this.currentBid = int.Parse(startPrice.Replace(" $", ""));
             this.isOwner = isOwner;
@@ -40,6 +40,7 @@ namespace AuctionClient
             // Устанавливаем имя пользователя в кнопке профиля
             ProfileButton.Content = $"Профиль ({username})";
         }
+
 
         private async Task ConnectToServer()
         {

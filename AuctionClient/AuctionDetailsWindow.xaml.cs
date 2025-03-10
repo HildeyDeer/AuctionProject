@@ -9,7 +9,7 @@ namespace AuctionClient
         private string username;
         private string auctionOwner;
 
-        public AuctionDetailsWindow(string name, string owner, string price, string description, string category, string endTime)
+        public AuctionDetailsWindow(string name, string owner, string price, string description, string category, string endTime, string username)
         {
             InitializeComponent();
 
@@ -27,7 +27,6 @@ namespace AuctionClient
             AuctionImage.Source = new System.Windows.Media.Imaging.BitmapImage(new System.Uri("https://geauction.com/wp-content/uploads/2018/07/5-Auction-Tips-for-Beginners2.jpg"));
         }
 
-
         private void JoinAuction_Click(object sender, RoutedEventArgs e)
         {
             bool isOwner = username == auctionOwner; // Проверяем, является ли пользователь владельцем
@@ -37,7 +36,5 @@ namespace AuctionClient
             );
             activeAuction.Show();
         }
-
-
     }
 }
