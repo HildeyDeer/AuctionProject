@@ -127,6 +127,7 @@ namespace AuctionClient
         }
 
 
+
         private async void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (AuctionList.SelectedItem is Auction selectedAuction)
@@ -180,6 +181,24 @@ namespace AuctionClient
         {
             _ = ManualRequestAuctions();
         }
+
+        private async void CategoryFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (stream == null) return;
+
+            string selectedCategory = ((ComboBoxItem)CategoryFilter.SelectedItem).Content.ToString();
+
+            if (selectedCategory == "Все")
+            {
+                await ManualRequestAuctions(); // Загружаем все аукционы
+                return;
+            }
+
+            string request = $"FILTER_BY_CATEGORY|{selectedCategory}";
+            byte[] data = Encoding.UTF8.GetBytes(request);
+            await stream.WriteAsync(data, 0, data.Length);
+        }
+
 
         private class Auction
         {

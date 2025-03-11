@@ -268,6 +268,38 @@ class AuctionServer
             return chatMessage;
         }
 
+        if (command == "FILTER_BY_CATEGORY" && parts.Length == 2)
+        {
+            string category = parts[1];
+
+            using var conn2 = new SQLiteConnection($"Data Source={DbPath};Version=3;");
+            conn2.Open();
+            using var cmd2 = new SQLiteCommand(conn2);
+
+            cmd2.CommandText = @"SELECT A.Name, O.Username, A.StartPrice, A.Category, A.EndTime 
+                         FROM Auctions A 
+                         JOIN Owners O ON A.OwnerId = O.Id 
+                         WHERE A.Status = 'Pending' AND A.Category = @category";
+            cmd2.Parameters.AddWithValue("@category", category);
+
+            using var reader2 = cmd2.ExecuteReader();
+            List<string> filteredAuctions = new();
+
+            while (reader2.Read())
+            {
+                string name = reader2.GetString(0);
+                string owner = reader2.GetString(1);
+                double startPrice = reader2.GetDouble(2);
+                string categoryName = reader2.GetString(3);
+                string endTime = reader2.GetString(4);
+
+                filteredAuctions.Add($"{name},{owner},{startPrice},{categoryName},{endTime}");
+            }
+
+            return filteredAuctions.Count > 0 ? $"AUCTIONS|{string.Join(";", filteredAuctions)}" : "AUCTIONS|EMPTY";
+        }
+
+
         return "ERROR|Неизвестная команда";
     }
 
