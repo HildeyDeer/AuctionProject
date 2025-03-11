@@ -23,7 +23,6 @@ namespace AuctionClient
 
             if (await AuthenticateUser(username, password))
             {
-                MessageBox.Show("Вход успешен!");
                 AuctionWindow auctionWindow = new AuctionWindow(username);
                 auctionWindow.Show();
                 Close();

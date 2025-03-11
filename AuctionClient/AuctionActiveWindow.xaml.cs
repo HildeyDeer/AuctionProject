@@ -103,12 +103,28 @@ namespace AuctionClient
                     }
                     else if (message.StartsWith("CHAT"))
                     {
-                        ChatBox.Items.Add(message.Substring(5)); // Добавляем сообщение в ListBox
-                        ChatBox.ScrollIntoView(ChatBox.Items[ChatBox.Items.Count - 1]); // Прокрутка вниз
+                        string chatMessage = message.Substring(5);  // Получаем текст сообщения без префикса CHAT|
+                        string[] parts = chatMessage.Split(':'); // Разбиваем на имя пользователя и сообщение по ':'
+
+                        if (parts.Length == 2)
+                        {
+                            string senderUsername = parts[0].Trim(); // Имя отправителя
+                            string chatText = parts[1].Trim(); // Текст сообщения
+
+                            // Форматируем сообщение с префиксом для владельца
+                            string formattedMessage = senderUsername == username
+                                ? $"{senderUsername} (Вы): {chatText}" // Если это наш собственный чат, добавляем "(Вы)"
+                                : $"{senderUsername}{(isOwner ? " (Владелец)" : "")}: {chatText}"; // Префикс владельца
+
+                            ChatBox.Items.Add(formattedMessage); // Добавляем сообщение в чат
+                            ChatBox.ScrollIntoView(ChatBox.Items[ChatBox.Items.Count - 1]); // Прокручиваем вниз
+                        }
                     }
                 });
             }
         }
+
+
 
         private async void SendChatButton_Click(object sender, RoutedEventArgs e)
         {
