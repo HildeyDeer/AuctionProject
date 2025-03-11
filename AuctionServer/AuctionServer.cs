@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
+
 class AuctionServer
 {
     private const int Port = 5001;  // Порт для аукциона
@@ -81,17 +82,19 @@ class AuctionServer
             string response = ProcessRequest(request);
 
             byte[] responseData = Encoding.UTF8.GetBytes(response);
-            await stream.WriteAsync(responseData, 0, responseData.Length);
+            await stream.WriteAsync(responseData, 0, responseData.Length); // Отправляем ответ только отправителю
 
-            // Рассылаем всем клиентам, если это сообщение в чат, ставка или добавление аукциона
+            // Рассылаем всем, кроме отправителя
             if (request.StartsWith("CHAT") || request.StartsWith("BID") || request.StartsWith("ADD_AUCTION"))
             {
-                BroadcastMessage(response);
+                BroadcastMessage(response, client);
             }
         }
 
         clients.Remove(client);
     }
+
+
 
     private static string ProcessRequest(string request)
     {
@@ -328,5 +331,6 @@ class AuctionServer
             clients.Remove(client);
         }
     }
+
 
 }

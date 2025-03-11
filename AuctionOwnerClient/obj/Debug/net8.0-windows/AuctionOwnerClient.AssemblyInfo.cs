@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AuctionOwnerClient")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1e71e1c6d97c8baafd6fc622523cdc155855681e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4fafe114b453596995381bb605f1a07212b43ca7")]
 [assembly: System.Reflection.AssemblyProductAttribute("AuctionOwnerClient")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AuctionOwnerClient")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
