@@ -36,10 +36,14 @@ class AuctionServer
 
         // Таблица пользователей
         cmd.CommandText = @"CREATE TABLE IF NOT EXISTS Users (
-                                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                Username TEXT UNIQUE NOT NULL,
-                                Password TEXT NOT NULL
-                            );";
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Username TEXT UNIQUE NOT NULL,
+                        Password TEXT NOT NULL,
+                        Email TEXT UNIQUE NOT NULL,
+                        Address TEXT,
+                        CardNumber TEXT,
+                        ProfileImage TEXT
+                    );";
         cmd.ExecuteNonQuery();
 
         // Таблица владельцев аукционов
@@ -161,7 +165,7 @@ class AuctionServer
 
             if (reader.Read())
             {
-                
+
                 string name = reader.GetString(0);
                 string owner = reader.GetString(1);
                 double startPrice = reader.GetDouble(2);
@@ -319,6 +323,66 @@ class AuctionServer
             {
                 return "ERROR|Аукцион не найден";
             }
+        }
+
+        // Получение данных пользователя
+        if (command == "USER_DETAILS" && parts.Length == 2)
+        {
+            string username = parts[1];
+
+            cmd.CommandText = @"SELECT Username, Password, Email, Address, CardNumber, ProfileImage 
+                        FROM Users WHERE Username = @username";
+            cmd.Parameters.AddWithValue("@username", username);
+
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                string user = reader.GetString(0);
+                string password = reader.GetString(1); // Желательно хранить хэш
+                string email = reader.GetString(2);
+                string address = reader.IsDBNull(3) ? "" : reader.GetString(3);
+                string cardNumber = reader.IsDBNull(4) ? "" : reader.GetString(4);
+                string profileImage = reader.IsDBNull(5) ? "" : reader.GetString(5);
+
+                return $"USER_DETAILS|{user}|{password}|{email}|{address}|{cardNumber}|{profileImage}";
+            }
+
+            return "ERROR|Пользователь не найден";
+        }
+
+        if (command == "CHANGE_PASSWORD" && parts.Length == 3)
+        {
+            string username = parts[1];
+            string newPassword = parts[2]; // Желательно передавать уже хэшированный пароль
+
+            cmd.CommandText = "UPDATE Users SET Password = @password WHERE Username = @username";
+            cmd.Parameters.AddWithValue("@password", newPassword);
+            cmd.Parameters.AddWithValue("@username", username);
+
+            int rowsUpdated = cmd.ExecuteNonQuery();
+            return rowsUpdated > 0 ? "SUCCESS|Пароль изменен" : "ERROR|Пользователь не найден";
+        }
+
+        if (command == "UPDATE_PROFILE" && parts.Length == 6)
+        {
+            string username = parts[1];
+            string email = parts[2];
+            string address = parts[3];
+            string cardNumber = parts[4];
+            string profileImage = parts[5];
+
+            cmd.CommandText = @"UPDATE Users 
+                        SET Email = @Email, Address = @Address, CardNumber = @CardNumber, ProfileImage = @ProfileImage 
+                        WHERE Username = @Username";
+
+            cmd.Parameters.AddWithValue("@Email", email);
+            cmd.Parameters.AddWithValue("@Address", address);
+            cmd.Parameters.AddWithValue("@CardNumber", cardNumber);
+            cmd.Parameters.AddWithValue("@ProfileImage", profileImage);
+            cmd.Parameters.AddWithValue("@Username", username);
+
+            int rowsUpdated = cmd.ExecuteNonQuery();
+            return rowsUpdated > 0 ? "SUCCESS|Профиль обновлен" : "ERROR|Пользователь не найден";
         }
 
 

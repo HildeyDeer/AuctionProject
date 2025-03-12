@@ -16,6 +16,15 @@
     <Compile Update="AuctionWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="ChangePasswordWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ProfileWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="RegisterWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="RoleSelectionWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -30,10 +39,19 @@
     <Page Update="AuctionDetailsWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="ChangePasswordWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="LoginWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="AuctionWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ProfileWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="RegisterWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="RoleSelectionWindow.xaml">

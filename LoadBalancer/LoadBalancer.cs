@@ -18,7 +18,7 @@ class LoadBalancer
 
     public async Task StartAsync(int port)
     {
-        TcpListener listener = new TcpListener(IPAddress.Any, port);
+        TcpListener listener = new TcpListener(IPAddress.Parse("127.0.0.1"), port);
         listener.Start();
         Console.WriteLine($"Load Balancer запущен на порту {port}");
 

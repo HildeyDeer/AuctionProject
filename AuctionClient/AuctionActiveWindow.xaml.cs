@@ -171,9 +171,40 @@ namespace AuctionClient
         }
 
         // Обработчик нажатия кнопки профиля
-        private void ProfileButton_Click(object sender, RoutedEventArgs e)
+        private async void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show($"Открытие профиля пользователя {username} (заглушка)");
+            if (stream == null) return;
+
+            // Формируем и отправляем запрос на сервер
+            string request = $"USER_DETAILS|{username}";
+            byte[] data = Encoding.UTF8.GetBytes(request);
+            await stream.WriteAsync(data, 0, data.Length);
+            await stream.FlushAsync();
+
+            // Получаем ответ
+            byte[] buffer = new byte[2048];
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            if (response.StartsWith("USER_DETAILS"))
+            {
+                string[] parts = response.Split('|');
+                if (parts.Length >= 6)
+                {
+                    string email = parts[3];
+                    string address = parts[4];
+                    string cardNumber = parts[5];
+                    string profileImage = parts.Length > 6 ? parts[6] : "";
+
+                    // Открываем окно профиля, передавая все данные
+                    ProfileWindow profileWindow = new ProfileWindow(username, email, address, cardNumber, profileImage, client);
+                    profileWindow.Show();
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка загрузки данных профиля", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         // Метод завершения аукциона

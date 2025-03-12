@@ -41,21 +41,31 @@ class AuthServer
 
         string command = parts[0];
         string username = parts[1];
-        string password = parts.Length > 2 ? parts[2] : "";
-        string permissionKey = parts.Length > 3 ? parts[3] : "";
 
         using var conn = new SQLiteConnection($"Data Source={DbPath};Version=3;");
         conn.Open();
         using var cmd = new SQLiteCommand(conn);
 
-        if (command == "REGISTER")
+        if (command == "REGISTER" && parts.Length >= 6)
         {
+            string password = parts[2]; // Желательно хэшировать
+            string email = parts[3];
+            string address = parts[4];
+            string cardNumber = parts[5];
+            string profileImage = parts.Length > 6 ? parts[6] : "";
+
             try
             {
-                cmd.CommandText = "INSERT INTO Users (Username, Password) VALUES (@user, @pass)";
+                cmd.CommandText = @"INSERT INTO Users (Username, Password, Email, Address, CardNumber, ProfileImage) 
+                                VALUES (@user, @pass, @mail, @addr, @card, @image)";
                 cmd.Parameters.AddWithValue("@user", username);
                 cmd.Parameters.AddWithValue("@pass", password);
+                cmd.Parameters.AddWithValue("@mail", email);
+                cmd.Parameters.AddWithValue("@addr", address);
+                cmd.Parameters.AddWithValue("@card", cardNumber);
+                cmd.Parameters.AddWithValue("@image", profileImage);
                 cmd.ExecuteNonQuery();
+
                 return "SUCCESS|Регистрация успешна";
             }
             catch (Exception ex)
@@ -64,24 +74,19 @@ class AuthServer
                 return "ERROR|Ошибка при регистрации";
             }
         }
-        else if (command == "LOGIN")
+        else if (command == "LOGIN" && parts.Length == 3) // Исправлено: проверяем только 2 параметра
         {
+            string password = parts[2];
+
             cmd.CommandText = "SELECT Id FROM Users WHERE Username = @user AND Password = @pass";
             cmd.Parameters.AddWithValue("@user", username);
             cmd.Parameters.AddWithValue("@pass", password);
             object result = cmd.ExecuteScalar();
+
             return result != null ? "SUCCESS|Вход успешен" : "ERROR|Неверный логин или пароль";
-        }
-        else if (command == "OWNER_LOGIN")
-        {
-            cmd.CommandText = "SELECT Id FROM Owners WHERE Username = @user AND Password = @pass AND PermissionKey = @key";
-            cmd.Parameters.AddWithValue("@user", username);
-            cmd.Parameters.AddWithValue("@pass", password);
-            cmd.Parameters.AddWithValue("@key", permissionKey);
-            object result = cmd.ExecuteScalar();
-            return result != null ? "SUCCESS|Вход владельца успешен" : "ERROR|Неверные данные владельца";
         }
 
         return "ERROR|Неизвестная команда";
     }
+
 }

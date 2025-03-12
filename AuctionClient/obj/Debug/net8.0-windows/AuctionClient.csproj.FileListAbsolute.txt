@@ -37,3 +37,9 @@ C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\AuctionActiveWindow.g.cs
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\WinnerWindow.baml
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\WinnerWindow.g.cs
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\ChangePasswordWindow.baml
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\ProfileWindow.baml
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\RegisterWindow.baml
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\ChangePasswordWindow.g.cs
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\ProfileWindow.g.cs
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\RegisterWindow.g.cs

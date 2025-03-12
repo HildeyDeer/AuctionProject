@@ -33,20 +33,12 @@ namespace AuctionClient
             }
         }
 
-        private async void Register_Click(object sender, RoutedEventArgs e)
+        private void Register_Click(object sender, RoutedEventArgs e)
         {
-            string username = UsernameBox.Text;
-            string password = PasswordBox.Password;
-
-            if (await Register(username, password))
-            {
-                MessageBox.Show("Регистрация успешна!");
-            }
-            else
-            {
-                MessageBox.Show("Ошибка регистрации!");
-            }
+            RegisterWindow registerWindow = new RegisterWindow();
+            registerWindow.ShowDialog();
         }
+
 
         private async Task<bool> AuthenticateUser(string username, string password)
         {
@@ -62,22 +54,6 @@ namespace AuctionClient
             int bytesRead = await stream.ReadAsync(responseBuffer, 0, responseBuffer.Length);
             string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesRead);
 
-            return response.StartsWith("SUCCESS");
-        }
-
-        private async Task<bool> Register(string username, string password)
-        {
-            using TcpClient client = new TcpClient();
-            await client.ConnectAsync(AuthServer, AuthPort);
-            NetworkStream stream = client.GetStream();
-
-            string request = $"REGISTER|{username}|{password}";
-            byte[] data = Encoding.UTF8.GetBytes(request);
-            await stream.WriteAsync(data, 0, data.Length);
-
-            byte[] responseBuffer = new byte[1024];
-            int bytesRead = await stream.ReadAsync(responseBuffer, 0, responseBuffer.Length);
-            string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesRead);
             return response.StartsWith("SUCCESS");
         }
     }
