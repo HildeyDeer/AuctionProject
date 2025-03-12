@@ -177,7 +177,7 @@ namespace AuctionClient
         }
 
         // Метод завершения аукциона
-        private void EndAuction()
+        private async void EndAuction()
         {
             countdownTimer.Stop();
             TimerText.Text = $"Аукцион завершён - победитель {lastBidder}";
@@ -185,6 +185,16 @@ namespace AuctionClient
             // Блокируем кнопку ставок и поле ввода
             PlaceBidButton.IsEnabled = false;
             BidAmount.IsEnabled = false;
+
+            // Отправляем запрос на закрытие аукциона в базу
+            string closeAuctionMessage = $"CLOSE_AUCTION|{auctionName}";
+            byte[] data = Encoding.UTF8.GetBytes(closeAuctionMessage);
+
+            if (stream != null)
+            {
+                await stream.WriteAsync(data, 0, data.Length);
+                await stream.FlushAsync();
+            }
 
             // Если текущий пользователь - победитель, открываем окно выигрыша
             if (username == lastBidder)
@@ -194,6 +204,7 @@ namespace AuctionClient
                 Close();
             }
         }
+
 
 
     }

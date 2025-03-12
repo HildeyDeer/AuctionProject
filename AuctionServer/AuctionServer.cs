@@ -302,6 +302,25 @@ class AuctionServer
             return filteredAuctions.Count > 0 ? $"AUCTIONS|{string.Join(";", filteredAuctions)}" : "AUCTIONS|EMPTY";
         }
 
+        // Закрытие аукциона
+        if (command == "CLOSE_AUCTION" && parts.Length == 2)
+        {
+            string auctionName = parts[1];
+
+            cmd.CommandText = "UPDATE Auctions SET Status = 'Closed' WHERE Name = @name";
+            cmd.Parameters.AddWithValue("@name", auctionName);
+            int rowsAffected = cmd.ExecuteNonQuery();
+
+            if (rowsAffected > 0)
+            {
+                return $"SUCCESS|Аукцион {auctionName} закрыт";
+            }
+            else
+            {
+                return "ERROR|Аукцион не найден";
+            }
+        }
+
 
         return "ERROR|Неизвестная команда";
     }
