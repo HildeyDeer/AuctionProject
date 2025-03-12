@@ -35,6 +35,7 @@ namespace AuctionClient
                 AuctionDescription.Text, AuctionImage.Source.ToString()
             );
             activeAuction.Show();
+            Close();
         }
     }
 }

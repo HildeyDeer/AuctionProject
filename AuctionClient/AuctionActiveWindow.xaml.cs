@@ -74,7 +74,14 @@ namespace AuctionClient
             countdownTimer.Tick += (s, e) =>
             {
                 TimeSpan remaining = auctionEndTime - DateTime.Now;
-                TimerText.Text = remaining.TotalSeconds > 0 ? $"До окончания: {remaining.Minutes}м {remaining.Seconds}с" : "Аукцион завершён!";
+                if (remaining.TotalSeconds > 0)
+                {
+                    TimerText.Text = $"До окончания: {remaining.Minutes}м {remaining.Seconds}с";
+                }
+                else
+                {
+                    EndAuction();
+                }
             };
             countdownTimer.Start();
         }
@@ -138,13 +145,22 @@ namespace AuctionClient
             ChatInput.Clear(); // Очищаем поле ввода после отправки
         }
 
+        // Обновляем ставки
         private async void PlaceBidButton_Click(object sender, RoutedEventArgs e)
         {
+            if (DateTime.Now >= auctionEndTime)
+            {
+                MessageBox.Show("Аукцион уже завершён!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (!int.TryParse(BidAmount.Text, out int bidValue) || bidValue <= currentBid)
             {
                 MessageBox.Show("Ставка должна быть выше текущей!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+
+            lastBidder = username; // Фиксируем последнего сделавшего ставку
 
             string bidMessage = $"BID|{auctionName}|{username}|{bidValue}";
             byte[] data = Encoding.UTF8.GetBytes(bidMessage);
@@ -158,6 +174,25 @@ namespace AuctionClient
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show($"Открытие профиля пользователя {username} (заглушка)");
+        }
+
+        // Метод завершения аукциона
+        private void EndAuction()
+        {
+            countdownTimer.Stop();
+            TimerText.Text = $"Аукцион завершён - победитель {lastBidder}";
+
+            // Блокируем кнопку ставок и поле ввода
+            PlaceBidButton.IsEnabled = false;
+            BidAmount.IsEnabled = false;
+
+            // Если текущий пользователь - победитель, открываем окно выигрыша
+            if (username == lastBidder)
+            {
+                WinnerWindow winnerWindow = new WinnerWindow(username, auctionName, currentBid);
+                winnerWindow.Show();
+                Close();
+            }
         }
 
 
