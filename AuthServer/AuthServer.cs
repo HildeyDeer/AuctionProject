@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 class AuthServer
 {
-    private const int Port = 4000;  // Порт сервера аутентификации
-    private const string DbPath = "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionServer\\AuctionDB.db"; // Теперь используем объединённую базу
+    private const int Port = 4000;
+    private const string DbPath = "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionServer\\AuctionDB.db";
 
     public static async Task Main()
     {
@@ -57,7 +57,7 @@ class AuthServer
             try
             {
                 cmd.CommandText = @"INSERT INTO Users (Username, Password, Email, Address, CardNumber, ProfileImage) 
-                                VALUES (@user, @pass, @mail, @addr, @card, @image)";
+                                    VALUES (@user, @pass, @mail, @addr, @card, @image)";
                 cmd.Parameters.AddWithValue("@user", username);
                 cmd.Parameters.AddWithValue("@pass", password);
                 cmd.Parameters.AddWithValue("@mail", email);
@@ -74,7 +74,7 @@ class AuthServer
                 return "ERROR|Ошибка при регистрации";
             }
         }
-        else if (command == "LOGIN" && parts.Length == 3) // Исправлено: проверяем только 2 параметра
+        else if (command == "LOGIN" && parts.Length == 3)
         {
             string password = parts[2];
 
@@ -85,8 +85,20 @@ class AuthServer
 
             return result != null ? "SUCCESS|Вход успешен" : "ERROR|Неверный логин или пароль";
         }
+        else if (command == "OWNER_LOGIN" && parts.Length == 4)
+        {
+            string password = parts[2];
+            string permissionKey = parts[3];
+
+            cmd.CommandText = "SELECT Id FROM Owners WHERE Username = @user AND Password = @pass AND PermissionKey = @permKey";
+            cmd.Parameters.AddWithValue("@user", username);
+            cmd.Parameters.AddWithValue("@pass", password);
+            cmd.Parameters.AddWithValue("@permKey", permissionKey);
+            object result = cmd.ExecuteScalar();
+
+            return result != null ? $"SUCCESS|{result}" : "ERROR|Неверные данные владельца";
+        }
 
         return "ERROR|Неизвестная команда";
     }
-
 }

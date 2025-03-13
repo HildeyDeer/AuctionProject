@@ -140,7 +140,7 @@ class AuctionServer
             return auctions.Count > 0 ? $"AUCTIONS|{string.Join(";", auctions)}" : "AUCTIONS|EMPTY";
         }
 
-        // Для других команд
+        //// Для других команд
         if (parts.Length < 2)
         {
             return "ERROR|Неверный формат запроса";
@@ -213,45 +213,66 @@ class AuctionServer
             }
         }
 
-        if (command == "GET_OWNER_ID" && parts.Length == 2)
+        if (command == "GET_OWN_AUCTIONS" && parts.Length == 2)
         {
-            string owner = parts[1];
-
-            cmd.CommandText = "SELECT Id FROM Owners WHERE Username = @username";
-            cmd.Parameters.AddWithValue("@username", owner);
-            object result = cmd.ExecuteScalar();
-
-            if (result != null)
-            {
-                int ownerId = Convert.ToInt32(result);
-                return $"OWNER_ID|{ownerId}";
-            }
-            else
-            {
-                return "ERROR|Владелец не найден";
-            }
-        }
-
-        if (command == "ADD_AUCTION" && parts.Length == 6)
-        {
-            string owner = parts[1];
-            if (!int.TryParse(parts[2], out int ownerId))
+            if (!int.TryParse(parts[1], out int ownerId))
             {
                 return "ERROR|Некорректный ID владельца";
             }
 
-            string name = parts[3];
-            string description = parts[4];
-            if (!double.TryParse(parts[5], out double startPrice))
+            using var conn2 = new SQLiteConnection($"Data Source={DbPath};Version=3;");
+            conn2.Open();
+            using var cmd2 = new SQLiteCommand(conn2);
+
+            cmd2.CommandText = @"SELECT Name, StartPrice, Category, EndTime, Status 
+                         FROM Auctions 
+                         WHERE OwnerId = @ownerId";
+            cmd2.Parameters.AddWithValue("@ownerId", ownerId);
+
+            using var reader2 = cmd2.ExecuteReader();
+            List<string> ownAuctions = new();
+
+            while (reader2.Read())
+            {
+                string name = reader2.GetString(0);
+                double startPrice = reader2.GetDouble(1);
+                string category = reader2.GetString(2);
+                string endTime = reader2.GetString(3);
+                string status = reader2.GetString(4);
+
+                ownAuctions.Add($"{name},{startPrice},{category},{endTime},{status}");
+            }
+
+            return ownAuctions.Count > 0 ? $"OWN_AUCTIONS|{string.Join(";", ownAuctions)}" : "OWN_AUCTIONS|EMPTY";
+        }
+
+
+        if (command == "ADD_AUCTION" && parts.Length == 7) // Теперь ожидаем 7 параметров
+        {
+            if (!int.TryParse(parts[1], out int ownerId))
+            {
+                return "ERROR|Некорректный ID владельца";
+            }
+
+            string name = parts[2];
+            string description = parts[3];
+            if (!double.TryParse(parts[4], out double startPrice))
             {
                 return "ERROR|Некорректная цена";
             }
 
-            cmd.CommandText = "INSERT INTO Auctions (OwnerId, Name, Description, StartPrice) VALUES (@ownerId, @name, @description, @startPrice)";
+            string category = parts[5]; // Категория
+            string endTime = parts[6]; // Время окончания
+
+            // Создаем SQL-запрос для добавления нового аукциона
+            cmd.CommandText = "INSERT INTO Auctions (OwnerId, Name, Description, StartPrice, Category, EndTime) " +
+                              "VALUES (@ownerId, @name, @description, @startPrice, @category, @endTime)";
             cmd.Parameters.AddWithValue("@ownerId", ownerId);
             cmd.Parameters.AddWithValue("@name", name);
             cmd.Parameters.AddWithValue("@description", description);
             cmd.Parameters.AddWithValue("@startPrice", startPrice);
+            cmd.Parameters.AddWithValue("@category", category);
+            cmd.Parameters.AddWithValue("@endTime", endTime);
 
             try
             {
@@ -263,6 +284,9 @@ class AuctionServer
                 return $"ERROR|Ошибка БД: {ex.Message}";
             }
         }
+
+
+
 
         // Обработка сообщений в чате (с префиксом владельца, если это владелец)
         if (command == "CHAT" && parts.Length == 4)

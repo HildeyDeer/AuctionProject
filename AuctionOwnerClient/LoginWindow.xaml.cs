@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace AuctionOwnerClient
 {
@@ -29,10 +28,11 @@ namespace AuctionOwnerClient
                 return;
             }
 
-            if (await AuthenticateOwner(username, password, permissionKey))
+            int? ownerId = await AuthenticateOwner(username, password, permissionKey);
+            if (ownerId.HasValue)
             {
                 MessageBox.Show("Вход успешен!");
-                OwnerAuctionWindow ownerAuctionWindow = new OwnerAuctionWindow(username);
+                OwnerAuctionWindow ownerAuctionWindow = new OwnerAuctionWindow(ownerId.Value);
                 ownerAuctionWindow.Show();
                 Close();
             }
@@ -42,21 +42,37 @@ namespace AuctionOwnerClient
             }
         }
 
-        private async Task<bool> AuthenticateOwner(string username, string password, string permissionKey)
+        private async Task<int?> AuthenticateOwner(string username, string password, string permissionKey)
         {
-            using TcpClient client = new TcpClient();
-            await client.ConnectAsync(AuthServer, AuthPort);
-            NetworkStream stream = client.GetStream();
+            try
+            {
+                using TcpClient client = new TcpClient();
+                await client.ConnectAsync(AuthServer, AuthPort);
+                using NetworkStream stream = client.GetStream();
 
-            string request = $"OWNER_LOGIN|{username}|{password}|{permissionKey}";
-            byte[] data = Encoding.UTF8.GetBytes(request);
-            await stream.WriteAsync(data, 0, data.Length);
+                string request = $"OWNER_LOGIN|{username}|{password}|{permissionKey}";
+                byte[] data = Encoding.UTF8.GetBytes(request);
+                await stream.WriteAsync(data, 0, data.Length);
+                await stream.FlushAsync();
 
-            byte[] responseBuffer = new byte[1024];
-            int bytesRead = await stream.ReadAsync(responseBuffer, 0, responseBuffer.Length);
-            string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesRead);
+                byte[] responseBuffer = new byte[1024];
+                int bytesRead = await stream.ReadAsync(responseBuffer, 0, responseBuffer.Length);
+                string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesRead);
 
-            return response.StartsWith("SUCCESS");
+                if (response.StartsWith("SUCCESS"))
+                {
+                    string[] parts = response.Split('|');
+                    if (parts.Length > 1 && int.TryParse(parts[1], out int ownerId))
+                    {
+                        return ownerId;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка соединения: {ex.Message}");
+            }
+            return null;
         }
     }
 }

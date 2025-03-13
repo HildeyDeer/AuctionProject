@@ -17,7 +17,6 @@ namespace AuctionClient
         private TcpClient client;
         private NetworkStream stream;
         private string username;
-        private DispatcherTimer auctionUpdateTimer;
 
         public AuctionWindow(string username)
         {
@@ -25,17 +24,6 @@ namespace AuctionClient
             this.username = username;
             ProfileButton.Content = $"Профиль ({username})";
             ConnectToServer();
-
-            //Таймер для обновления списка аукционов
-
-            _ = Task.Run(() => RequestAuctions());
-
-            //auctionUpdateTimer = new DispatcherTimer
-            //{
-            //    Interval = TimeSpan.FromSeconds(2)
-            //};
-            //auctionUpdateTimer.Tick += async (s, e) => await RequestAuctions();
-            //auctionUpdateTimer.Start();
         }
 
         private async void ConnectToServer()
@@ -45,10 +33,9 @@ namespace AuctionClient
                 client = new TcpClient();
                 await client.ConnectAsync(AuctionServer, AuctionPort);
                 stream = client.GetStream();
-                ListenForMessages();
 
-                // Первое обновление аукционов
-                await RequestAuctions();
+                // Запускаем обновление аукционов и прием сообщений
+                _ = Task.Run(HandleAuctionUpdates);
             }
             catch (Exception ex)
             {
@@ -56,76 +43,100 @@ namespace AuctionClient
             }
         }
 
-        private async Task RequestAuctions()
+        private async Task HandleAuctionUpdates()
         {
-
             if (stream == null) return;
 
-            string request = "GET_AUCTIONS";
-            byte[] data = Encoding.UTF8.GetBytes(request);
-
-            while (true)
-            {
-                await stream.WriteAsync(data, 0, data.Length);
-                Console.WriteLine("Request sent at: " + DateTime.Now);
-
-                // Задержка 30 секунд
-                await Task.Delay(30000); // 30000 миллисекунд = 30 секунд
-            }
-        }
-
-        private async Task ManualRequestAuctions()
-        {
-
-            if (stream == null) return;
-
-            string request = "GET_AUCTIONS";
-            byte[] data = Encoding.UTF8.GetBytes(request);
-            await stream.WriteAsync(data, 0, data.Length);
-        }
-
-        private async void ListenForMessages()
-        {
             byte[] buffer = new byte[4096];
+            string request = "GET_AUCTIONS";
+            byte[] requestData = Encoding.UTF8.GetBytes(request);
+
             while (true)
             {
+                // Отправка запроса на получение аукционов
+                await stream.WriteAsync(requestData, 0, requestData.Length);
+                await stream.FlushAsync();
+
+                // Чтение данных от сервера
                 int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                if (bytesRead == 0) break;
+                if (bytesRead == 0) break; // Соединение разорвано
 
                 string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
                 if (message.StartsWith("AUCTIONS"))
                 {
                     string[] parts = message.Split('|');
-                    if (parts.Length > 1)
+                    Dispatcher.Invoke(() =>
                     {
-                        Dispatcher.Invoke(() =>
+                        AuctionList.Items.Clear();
+                        if (parts.Length > 1 && parts[1] != "EMPTY")
                         {
-                            AuctionList.Items.Clear();
-                            if (parts[1] != "EMPTY")
+                            foreach (string auction in parts[1].Split(';'))
                             {
-                                foreach (string auction in parts[1].Split(';'))
+                                string[] details = auction.Split(',');
+                                if (details.Length == 5)
                                 {
-                                    string[] details = auction.Split(',');
-                                    if (details.Length == 5)
+                                    AuctionList.Items.Add(new Auction
                                     {
-                                        AuctionList.Items.Add(new Auction
-                                        {
-                                            Name = details[0],
-                                            OwnerUsername = details[1],
-                                            StartPrice = details[2] + " $",
-                                            Category = details[3],
-                                            EndTime = details[4]
-                                        });
-                                    }
+                                        Name = details[0],
+                                        OwnerUsername = details[1],
+                                        StartPrice = details[2] + " $",
+                                        Category = details[3],
+                                        EndTime = details[4]
+                                    });
                                 }
                             }
-                        });
-                    }
+                        }
+                    });
                 }
+
+                // Задержка 30 секунд перед следующим запросом
+                await Task.Delay(30000);
             }
         }
 
+        private async Task ManualRequestAuctions()
+        {
+            if (stream == null) return;
+
+            string request = "GET_AUCTIONS";
+            byte[] data = Encoding.UTF8.GetBytes(request);
+            await stream.WriteAsync(data, 0, data.Length);
+            await stream.FlushAsync();
+
+            byte[] buffer = new byte[4096];
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            if (bytesRead == 0) return; // Соединение разорвано
+
+            string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            if (message.StartsWith("AUCTIONS"))
+            {
+                string[] parts = message.Split('|');
+                Dispatcher.Invoke(() =>
+                {
+                    AuctionList.Items.Clear();
+                    if (parts.Length > 1 && parts[1] != "EMPTY")
+                    {
+                        foreach (string auction in parts[1].Split(';'))
+                        {
+                            string[] details = auction.Split(',');
+                            if (details.Length == 5)
+                            {
+                                AuctionList.Items.Add(new Auction
+                                {
+                                    Name = details[0],
+                                    OwnerUsername = details[1],
+                                    StartPrice = details[2] + " $",
+                                    Category = details[3],
+                                    EndTime = details[4]
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+        }
 
 
         private async void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -138,7 +149,7 @@ namespace AuctionClient
                 await stream.WriteAsync(data, 0, data.Length);
                 await stream.FlushAsync();
 
-                byte[] buffer = new byte[4096]; // Буфер для ответа
+                byte[] buffer = new byte[4096];
                 int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
                 string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
@@ -155,7 +166,6 @@ namespace AuctionClient
                         string endTime = parts[6];
                         string status = parts[7];
 
-                        // Создаем окно деталей аукциона, передавая username
                         AuctionDetailsWindow detailsWindow = new AuctionDetailsWindow(
                             name, owner, startPrice, description, category, endTime, username
                         );
@@ -169,20 +179,15 @@ namespace AuctionClient
             }
         }
 
-
-
-
         private async void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
             if (stream == null) return;
 
-            // Формируем и отправляем запрос на сервер
             string request = $"USER_DETAILS|{username}";
             byte[] data = Encoding.UTF8.GetBytes(request);
             await stream.WriteAsync(data, 0, data.Length);
             await stream.FlushAsync();
 
-            // Получаем ответ
             byte[] buffer = new byte[2048];
             int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
             string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
@@ -197,7 +202,6 @@ namespace AuctionClient
                     string cardNumber = parts[5];
                     string profileImage = parts.Length > 6 ? parts[6] : "";
 
-                    // Открываем окно профиля, передавая все данные
                     ProfileWindow profileWindow = new ProfileWindow(username, email, address, cardNumber, profileImage, client);
                     profileWindow.Show();
                 }
@@ -221,15 +225,49 @@ namespace AuctionClient
 
             if (selectedCategory == "Все")
             {
-                await ManualRequestAuctions(); // Загружаем все аукционы
+                await ManualRequestAuctions();
                 return;
             }
 
             string request = $"FILTER_BY_CATEGORY|{selectedCategory}";
             byte[] data = Encoding.UTF8.GetBytes(request);
             await stream.WriteAsync(data, 0, data.Length);
-        }
+            await stream.FlushAsync();
 
+            // Читаем ответ от сервера
+            byte[] buffer = new byte[4096];
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            if (bytesRead == 0) return; // Если соединение разорвано
+
+            string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            if (message.StartsWith("AUCTIONS"))
+            {
+                string[] parts = message.Split('|');
+                Dispatcher.Invoke(() =>
+                {
+                    AuctionList.Items.Clear();
+                    if (parts.Length > 1 && parts[1] != "EMPTY")
+                    {
+                        foreach (string auction in parts[1].Split(';'))
+                        {
+                            string[] details = auction.Split(',');
+                            if (details.Length == 5)
+                            {
+                                AuctionList.Items.Add(new Auction
+                                {
+                                    Name = details[0],
+                                    OwnerUsername = details[1],
+                                    StartPrice = details[2] + " $",
+                                    Category = details[3],
+                                    EndTime = details[4]
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+        }
 
         private class Auction
         {
@@ -237,8 +275,8 @@ namespace AuctionClient
             public string OwnerUsername { get; set; }
             public string StartPrice { get; set; }
             public string Category { get; set; }
-            public string EndTime { get; set; } // Время окончания
-            public string Status { get; set; }  // Статус аукциона
+            public string EndTime { get; set; }
+            public string Status { get; set; }
         }
     }
 }

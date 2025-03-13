@@ -1,9 +1,10 @@
-﻿using AuctionOwnerClient;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace AuctionOwnerClient
 {
@@ -11,14 +12,14 @@ namespace AuctionOwnerClient
     {
         private const string AuctionServer = "127.0.0.1";
         private const int AuctionPort = 5001;
-        private TcpClient owner;
+        private TcpClient client;
         private NetworkStream stream;
-        private string username;
+        private int ownerId;
 
-        public OwnerAuctionWindow(string username)
+        public OwnerAuctionWindow(int ownerId)
         {
             InitializeComponent();
-            this.username = username;
+            this.ownerId = ownerId;
             ConnectToServer();
         }
 
@@ -26,10 +27,11 @@ namespace AuctionOwnerClient
         {
             try
             {
-                owner = new TcpClient();
-                await owner.ConnectAsync(AuctionServer, AuctionPort);
-                stream = owner.GetStream();
-                ListenForMessages();
+                client = new TcpClient();
+                await client.ConnectAsync(AuctionServer, AuctionPort);
+                stream = client.GetStream();
+
+                await RequestOwnAuctions();
             }
             catch (Exception ex)
             {
@@ -37,110 +39,82 @@ namespace AuctionOwnerClient
             }
         }
 
-        private async void ListenForMessages()
+        private async Task RequestOwnAuctions()
         {
-            byte[] buffer = new byte[1024];
-            while (true)
+            if (stream == null) return;
+
+            string request = $"GET_OWN_AUCTIONS|{ownerId}";
+            byte[] data = Encoding.UTF8.GetBytes(request);
+            await stream.WriteAsync(data, 0, data.Length);
+            await stream.FlushAsync();
+
+            byte[] buffer = new byte[4096];
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            if (response.StartsWith("OWN_AUCTIONS"))
             {
-                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                if (bytesRead == 0) break;
-
-                string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                Dispatcher.Invoke(() => ChatBox.Items.Add(message));
-            }
-        }
-        private async void LoadAuctions()
-        {
-            try
-            {
-                // 🔹 **Сначала получаем ID владельца**
-                string requestOwnerId = $"GET_OWNER_ID|{username}";
-                byte[] requestData = Encoding.UTF8.GetBytes(requestOwnerId);
-                await stream.WriteAsync(requestData, 0, requestData.Length);
-
-                byte[] buffer = new byte[1024];
-                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-                if (!response.StartsWith("OWNER_ID|"))
+                string[] parts = response.Split('|');
+                Dispatcher.Invoke(() =>
                 {
-                    MessageBox.Show("Ошибка: не удалось получить ID владельца.");
-                    return;
-                }
-
-                string ownerId = response.Split('|')[1];
-
-                // 🔹 **Запрашиваем аукционы только для владельца**
-                string request = $"GET_AUCTIONS|{ownerId}";
-                byte[] data = Encoding.UTF8.GetBytes(request);
-                await stream.WriteAsync(data, 0, data.Length);
-
-                bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-                AuctionList.Items.Clear();
-
-                if (response == "EMPTY")
-                {
-                    return;
-                }
-                if (response.StartsWith("ERROR"))
-                {
-                    MessageBox.Show($"Ошибка загрузки аукционов: {response}");
-                    return;
-                }
-
-                string[] auctions = response.Split(';');
-                foreach (string auction in auctions)
-                {
-                    if (!string.IsNullOrWhiteSpace(auction))
+                    AuctionList.Items.Clear();
+                    if (parts.Length > 1 && parts[1] != "EMPTY")
                     {
-                        AuctionList.Items.Add(auction);
+                        foreach (string auction in parts[1].Split(';'))
+                        {
+                            string[] details = auction.Split(',');
+                            if (details.Length >= 5)
+                            {
+                                AuctionList.Items.Add(new Auction
+                                {
+                                    Name = details[0],
+                                    StartPrice = double.Parse(details[1]),
+                                    Category = details[2],
+                                    EndTime = details[3],
+                                    Status = details[4]
+                                });
+                            }
+                        }
                     }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка загрузки аукционов: {ex.Message}");
+                });
             }
         }
-
-        private void AddAuction_Click(object sender, RoutedEventArgs e)
-        {
-            AddAuctionWindow addAuctionWindow = new AddAuctionWindow(stream, username);
-            addAuctionWindow.ShowDialog();
-            LoadAuctions(); // Перезагружаем аукционы после добавления
-        }
-
 
         private async void DeleteAuction_Click(object sender, RoutedEventArgs e)
         {
-            string deleteMessage = $"DELETE_AUCTION|{username}|1"; // Заглушка ID
-            byte[] data = Encoding.UTF8.GetBytes(deleteMessage);
-            await stream.WriteAsync(data, 0, data.Length);
+            if (sender is Button button && button.DataContext is Auction auction)
+            {
+                string request = $"CLOSE_AUCTION|{auction.Name}";
+                byte[] data = Encoding.UTF8.GetBytes(request);
+                await stream.WriteAsync(data, 0, data.Length);
+                await stream.FlushAsync();
+
+                await RequestOwnAuctions();
+            }
+        }
+        private void AddAuction_Click(object sender, RoutedEventArgs e)
+        {
+            // Открытие окна добавления аукциона с передачей ownerId
+            AddAuctionWindow addAuctionWindow = new AddAuctionWindow(stream, ownerId);
+            addAuctionWindow.ShowDialog();
         }
 
-        private async void StartAuction_Click(object sender, RoutedEventArgs e)
+
+        private void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string startMessage = $"START_AUCTION|{username}|1"; // Заглушка ID
-            byte[] data = Encoding.UTF8.GetBytes(startMessage);
-            await stream.WriteAsync(data, 0, data.Length);
+            if (AuctionList.SelectedItem is Auction selectedAuction)
+            {
+                MessageBox.Show($"Детали аукциона:\nНазвание: {selectedAuction.Name}\nЦена: {selectedAuction.StartPrice}\nКатегория: {selectedAuction.Category}\nСтатус: {selectedAuction.Status}\nЗавершается: {selectedAuction.EndTime}");
+            }
         }
 
-        private async void SendChat_Click(object sender, RoutedEventArgs e)
+        private class Auction
         {
-            string message = ChatMessageBox.Text;
-            if (string.IsNullOrWhiteSpace(message)) return;
-
-            string chatMessage = $"CHAT|{username}|OWNER|{message}";
-            byte[] data = Encoding.UTF8.GetBytes(chatMessage);
-            await stream.WriteAsync(data, 0, data.Length);
-            ChatMessageBox.Clear();
-        }
-        private async void RefreshAuctions_Click(object sender, RoutedEventArgs e)
-        {
-            // Загружаем обновленный список аукционов
-            LoadAuctions();
+            public string Name { get; set; }
+            public double StartPrice { get; set; }
+            public string Category { get; set; }
+            public string EndTime { get; set; }
+            public string Status { get; set; }
         }
     }
 }
