@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace AuctionOwnerClient
 {
@@ -15,12 +16,18 @@ namespace AuctionOwnerClient
         private TcpClient client;
         private NetworkStream stream;
         private int ownerId;
+        private DispatcherTimer refreshTimer;
 
         public OwnerAuctionWindow(int ownerId)
         {
             InitializeComponent();
             this.ownerId = ownerId;
             ConnectToServer();
+
+            // Таймер автообновления списка
+            refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
+            refreshTimer.Tick += async (s, e) => await RequestOwnAuctions();
+            refreshTimer.Start();
         }
 
         private async void ConnectToServer()
@@ -80,41 +87,62 @@ namespace AuctionOwnerClient
             }
         }
 
-        private async void DeleteAuction_Click(object sender, RoutedEventArgs e)
+        private async void AuctionActionButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.DataContext is Auction auction)
             {
-                string request = $"CLOSE_AUCTION|{auction.Name}";
+                // Новый статус в зависимости от текущего состояния
+                string newStatus = auction.Status == "Pending" ? "Closed" : "Pending";
+
+                // Формируем запрос в нужном формате
+                string request = $"UPDATE_AUCTION_STATUS|{auction.Name}|{newStatus}";
                 byte[] data = Encoding.UTF8.GetBytes(request);
+
                 await stream.WriteAsync(data, 0, data.Length);
                 await stream.FlushAsync();
 
-                await RequestOwnAuctions();
+                await RequestOwnAuctions(); // Обновляем список аукционов после смены статуса
             }
         }
+
         private void AddAuction_Click(object sender, RoutedEventArgs e)
         {
             // Открытие окна добавления аукциона с передачей ownerId
             AddAuctionWindow addAuctionWindow = new AddAuctionWindow(stream, ownerId);
             addAuctionWindow.ShowDialog();
         }
-
-
-        private void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            if (AuctionList.SelectedItem is Auction selectedAuction)
-            {
-                MessageBox.Show($"Детали аукциона:\nНазвание: {selectedAuction.Name}\nЦена: {selectedAuction.StartPrice}\nКатегория: {selectedAuction.Category}\nСтатус: {selectedAuction.Status}\nЗавершается: {selectedAuction.EndTime}");
-            }
+            await RequestOwnAuctions();
         }
 
-        private class Auction
+        public class Auction : INotifyPropertyChanged
         {
             public string Name { get; set; }
             public double StartPrice { get; set; }
             public string Category { get; set; }
             public string EndTime { get; set; }
-            public string Status { get; set; }
+
+            private string status;
+            public string Status
+            {
+                get => status;
+                set
+                {
+                    if (status != value)
+                    {
+                        status = value;
+                        OnPropertyChanged(nameof(Status));
+                    }
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected virtual void OnPropertyChanged(string propertyName)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }
+

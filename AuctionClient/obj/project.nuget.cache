@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "CONjVcTkk0PGGMoiEaU8zysJou33mLHWFlCrzZ/Oml4zMb9v5MFma6uJ2/D/NItnWgRrE6WouvkUNL9FtI4mQw==",
+  "dgSpecHash": "QlSg5eSnSR8qCmvRJtdmQ5JElF6GnLqCvo30anXo2B9MptKz2VETsuWBPnwBmRI7yt11/eMuJxCr3WJA71WJ6g==",
   "success": true,
   "projectFilePath": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\AuctionClient.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\user\\.nuget\\packages\\extended.wpf.toolkit\\4.7.25104.5739\\extended.wpf.toolkit.4.7.25104.5739.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.data.sqlite.core\\8.0.12\\microsoft.data.sqlite.core.8.0.12.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\sqlitepclraw.core\\2.1.6\\sqlitepclraw.core.2.1.6.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512"

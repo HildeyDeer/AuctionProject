@@ -285,6 +285,28 @@ class AuctionServer
             }
         }
 
+        // Обновление статуса аукциона
+        if (command == "UPDATE_AUCTION_STATUS" && parts.Length == 3)
+        {
+            string auctionName = parts[1];
+            string newStatus = parts[2];
+
+            cmd.CommandText = "UPDATE Auctions SET Status = @status WHERE Name = @name";
+            cmd.Parameters.AddWithValue("@status", newStatus);
+            cmd.Parameters.AddWithValue("@name", auctionName);
+
+            int rowsUpdated = cmd.ExecuteNonQuery();
+            if (rowsUpdated > 0)
+            {
+                string statusUpdateMessage = $"AUCTION_STATUS_UPDATED|{auctionName}|{newStatus}";
+                BroadcastMessage(statusUpdateMessage); // Оповещаем клиентов о смене статуса
+                return $"SUCCESS|Статус аукциона {auctionName} обновлен на {newStatus}";
+            }
+            else
+            {
+                return "ERROR|Аукцион не найден";
+            }
+        }
 
 
 
