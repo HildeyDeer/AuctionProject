@@ -44,4 +44,5 @@ C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\bin\Debug\n
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\bin\Debug\net8.0-windows\sv\Xceed.Wpf.AvalonDock.resources.dll
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\bin\Debug\net8.0-windows\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
-C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\AuctionOwnerClient_MarkupCompile.lref
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\AuctionDetailsWindow.baml
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\AuctionDetailsWindow.g.cs

@@ -298,8 +298,8 @@ class AuctionServer
             int rowsUpdated = cmd.ExecuteNonQuery();
             if (rowsUpdated > 0)
             {
-                string statusUpdateMessage = $"AUCTION_STATUS_UPDATED|{auctionName}|{newStatus}";
-                BroadcastMessage(statusUpdateMessage); // Оповещаем клиентов о смене статуса
+                //string statusUpdateMessage = $"AUCTION_STATUS_UPDATED|{auctionName}|{newStatus}";
+                //BroadcastMessage(statusUpdateMessage); // Оповещаем клиентов о смене статуса
                 return $"SUCCESS|Статус аукциона {auctionName} обновлен на {newStatus}";
             }
             else

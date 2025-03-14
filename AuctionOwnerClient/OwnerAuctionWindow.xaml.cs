@@ -1,5 +1,6 @@
-﻿using System;
-using System.ComponentModel;
+﻿
+using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,18 +17,12 @@ namespace AuctionOwnerClient
         private TcpClient client;
         private NetworkStream stream;
         private int ownerId;
-        private DispatcherTimer refreshTimer;
 
         public OwnerAuctionWindow(int ownerId)
         {
             InitializeComponent();
             this.ownerId = ownerId;
             ConnectToServer();
-
-            // Таймер автообновления списка
-            refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
-            refreshTimer.Tick += async (s, e) => await RequestOwnAuctions();
-            refreshTimer.Start();
         }
 
         private async void ConnectToServer()
@@ -87,62 +82,127 @@ namespace AuctionOwnerClient
             }
         }
 
-        private async void AuctionActionButton_Click(object sender, RoutedEventArgs e)
+        private async void CloseAuction_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.DataContext is Auction auction)
             {
-                // Новый статус в зависимости от текущего состояния
-                string newStatus = auction.Status == "Pending" ? "Closed" : "Pending";
-
-                // Формируем запрос в нужном формате
-                string request = $"UPDATE_AUCTION_STATUS|{auction.Name}|{newStatus}";
-                byte[] data = Encoding.UTF8.GetBytes(request);
-
-                await stream.WriteAsync(data, 0, data.Length);
-                await stream.FlushAsync();
-
-                await RequestOwnAuctions(); // Обновляем список аукционов после смены статуса
+                await ChangeAuctionStatus(auction.Name, "Closed");
             }
+        }
+
+        private async void RestoreAuction_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is Auction auction)
+            {
+                await ChangeAuctionStatus(auction.Name, "Pending");
+            }
+        }
+
+        private async Task ChangeAuctionStatus(string auctionName, string newStatus)
+        {
+            if (stream == null) return;
+
+            string request = $"UPDATE_AUCTION_STATUS|{auctionName}|{newStatus}";
+            byte[] data = Encoding.UTF8.GetBytes(request);
+            await stream.WriteAsync(data, 0, data.Length);
+            await stream.FlushAsync();
+
+            // Ожидание ответа от сервера
+            byte[] buffer = new byte[4096];
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            if (response.StartsWith("SUCCESS"))
+            {
+                ShowNotification($"Статус аукциона '{auctionName}' изменён на '{newStatus}'");
+
+                // Ожидание 1.5 секунды перед обновлением списка
+                //await Task.Delay(1500);
+
+                await RequestOwnAuctions();
+            }
+            else if (response.StartsWith("ERROR"))
+            {
+                MessageBox.Show(response.Split('|')[1], "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
+        private void ShowNotification(string message)
+        {
+            Task.Run(() =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    var notification = new TextBlock
+                    {
+                        Text = message,
+                        Background = System.Windows.Media.Brushes.DarkGray,
+                        Foreground = System.Windows.Media.Brushes.White,
+                        Padding = new Thickness(10),
+                        Opacity = 0.9,
+                        FontSize = 14
+                    };
+
+                    var border = new Border
+                    {
+                        Background = System.Windows.Media.Brushes.Black,
+                        CornerRadius = new CornerRadius(5),
+                        Padding = new Thickness(5),
+                        Margin = new Thickness(10),
+                        Child = notification
+                    };
+
+                    NotificationPanel.Children.Add(border);
+
+                    // Удаление уведомления через 3 секунды
+                    Task.Delay(3000).ContinueWith(_ =>
+                    {
+                        Dispatcher.Invoke(() => NotificationPanel.Children.Remove(border));
+                    });
+                });
+            });
         }
 
         private void AddAuction_Click(object sender, RoutedEventArgs e)
         {
-            // Открытие окна добавления аукциона с передачей ownerId
             AddAuctionWindow addAuctionWindow = new AddAuctionWindow(stream, ownerId);
             addAuctionWindow.ShowDialog();
         }
-        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+
+        private void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (AuctionList.SelectedItem is Auction selectedAuction)
+            {
+                // Создание окна с деталями аукциона
+                AuctionDetailsWindow detailsWindow = new AuctionDetailsWindow(
+                    selectedAuction.Name,
+                    selectedAuction.StartPrice,
+                    "Описание недоступно",  // Если сервер не передаёт описание, можно оставить заглушку
+                    selectedAuction.Category,
+                    selectedAuction.EndTime,
+                    true // Так как это OwnerAuctionWindow, владелец — всегда текущий пользователь
+                );
+
+                detailsWindow.ShowDialog();
+            }
+        }
+
+        private async void RefreshAuction_Click(object sender, RoutedEventArgs e)
         {
             await RequestOwnAuctions();
         }
 
-        public class Auction : INotifyPropertyChanged
+        private class Auction
         {
             public string Name { get; set; }
             public double StartPrice { get; set; }
             public string Category { get; set; }
             public string EndTime { get; set; }
-
-            private string status;
-            public string Status
-            {
-                get => status;
-                set
-                {
-                    if (status != value)
-                    {
-                        status = value;
-                        OnPropertyChanged(nameof(Status));
-                    }
-                }
-            }
-
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected virtual void OnPropertyChanged(string propertyName)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
+            public string Status { get; set; }
         }
     }
 }
+
+
 
