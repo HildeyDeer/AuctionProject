@@ -65,16 +65,17 @@ namespace AuctionOwnerClient
                         foreach (string auction in parts[1].Split(';'))
                         {
                             string[] details = auction.Split(',');
-                            if (details.Length >= 6)
+                            if (details.Length >= 7) // Теперь ожидаем 7 полей
                             {
                                 AuctionList.Items.Add(new Auction
                                 {
                                     Name = details[0],
-                                    Description = details[1], // Добавлено описание
+                                    Description = details[1],
                                     StartPrice = double.Parse(details[2]),
                                     Category = details[3],
                                     EndTime = details[4],
-                                    Status = details[5]
+                                    Status = details[5],
+                                    ImageUrl = details[6] // Получаем ссылку на изображение
                                 });
                             }
                         }
@@ -82,6 +83,7 @@ namespace AuctionOwnerClient
                 });
             }
         }
+
 
 
         private async void CloseAuction_Click(object sender, RoutedEventArgs e)
@@ -200,6 +202,7 @@ namespace AuctionOwnerClient
             addAuctionWindow.ShowDialog();
         }
 
+
         private async void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (AuctionList.SelectedItem is Auction selectedAuction)
@@ -213,7 +216,8 @@ namespace AuctionOwnerClient
                     selectedAuction.Category,
                     selectedAuction.EndTime,
                     true,
-                    ownerName // Передаём имя владельца
+                    ownerName,
+                    selectedAuction.ImageUrl // Передаём имя владельца
                 );
 
                 detailsWindow.ShowDialog();
@@ -274,6 +278,7 @@ namespace AuctionOwnerClient
             public string Category { get; set; }
             public string EndTime { get; set; }
             public string Status { get; set; }
+            public string ImageUrl { get; set; } // Новое поле для ссылки на изображение
         }
 
     }

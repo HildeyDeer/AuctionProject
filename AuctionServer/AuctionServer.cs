@@ -65,6 +65,7 @@ class AuctionServer
                         Category TEXT NOT NULL,
                         EndTime DATETIME NOT NULL,
                         Status TEXT DEFAULT 'Pending',
+                        ImageUrl TEXT,
                         FOREIGN KEY (OwnerId) REFERENCES Owners(Id)
                     );";
         cmd.ExecuteNonQuery();
@@ -118,10 +119,10 @@ class AuctionServer
             conn1.Open();
             using var cmd1 = new SQLiteCommand(conn1);
 
-            cmd1.CommandText = @"SELECT A.Name, O.Username, A.StartPrice, A.Category, A.EndTime 
-                         FROM Auctions A 
-                         JOIN Owners O ON A.OwnerId = O.Id 
-                         WHERE A.Status = 'Pending'";
+            cmd1.CommandText = @"SELECT A.Name, O.Username, A.StartPrice, A.Category, A.EndTime, A.ImageUrl 
+                     FROM Auctions A 
+                     JOIN Owners O ON A.OwnerId = O.Id 
+                     WHERE A.Status = 'Pending'";
 
             using var reader = cmd1.ExecuteReader();
             List<string> auctions = new();
@@ -133,11 +134,13 @@ class AuctionServer
                 double startPrice = reader.GetDouble(2);
                 string category = reader.GetString(3);
                 string endTime = reader.GetString(4);
+                string imageUrl = reader.IsDBNull(5) ? "" : reader.GetString(5); // Проверка на NULL
 
-                auctions.Add($"{name},{owner},{startPrice},{category},{endTime}");
+                auctions.Add($"{name},{owner},{startPrice},{category},{endTime},{imageUrl}");
             }
 
             return auctions.Count > 0 ? $"AUCTIONS|{string.Join(";", auctions)}" : "AUCTIONS|EMPTY";
+
         }
 
         //// Для других команд
@@ -155,7 +158,7 @@ class AuctionServer
         {
             string auctionName = parts[1];
 
-            cmd.CommandText = @"SELECT A.Name, O.Username, A.StartPrice, A.Description, A.Category, A.EndTime, A.Status
+            cmd.CommandText = @"SELECT A.Name, O.Username, A.StartPrice, A.Description, A.Category, A.EndTime, A.Status, A.ImageUrl
                     FROM Auctions A 
                     JOIN Owners O ON A.OwnerId = O.Id 
                     WHERE A.Name = @name";
@@ -165,7 +168,6 @@ class AuctionServer
 
             if (reader.Read())
             {
-
                 string name = reader.GetString(0);
                 string owner = reader.GetString(1);
                 double startPrice = reader.GetDouble(2);
@@ -173,12 +175,13 @@ class AuctionServer
                 string category = reader.GetString(4);
                 string endTime = reader.GetString(5);
                 string status = reader.GetString(6);
+                string imageUrl = reader.IsDBNull(7) ? "" : reader.GetString(7);
 
-
-                return $"AUCTION_DETAILS|{name}|{owner}|{startPrice}|{description}|{category}|{endTime}|{status}";
+                return $"AUCTION_DETAILS|{name}|{owner}|{startPrice}|{description}|{category}|{endTime}|{status}|{imageUrl}";
             }
 
             return "ERROR|Аукцион не найден";
+
         }
 
         // Обработка ставки
@@ -224,7 +227,7 @@ class AuctionServer
             conn2.Open();
             using var cmd2 = new SQLiteCommand(conn2);
 
-            cmd2.CommandText = @"SELECT Name, Description, StartPrice, Category, EndTime, Status 
+            cmd2.CommandText = @"SELECT Name, Description, StartPrice, Category, EndTime, Status, ImageUrl
                      FROM Auctions 
                      WHERE OwnerId = @ownerId";
             cmd2.Parameters.AddWithValue("@ownerId", ownerId);
@@ -240,16 +243,18 @@ class AuctionServer
                 string category = reader2.GetString(3);
                 string endTime = reader2.GetString(4);
                 string status = reader2.GetString(5);
+                string imageUrl = reader2.IsDBNull(6) ? "" : reader2.GetString(6);
 
-                ownAuctions.Add($"{name},{description},{startPrice},{category},{endTime},{status}");
+                ownAuctions.Add($"{name},{description},{startPrice},{category},{endTime},{status},{imageUrl}");
             }
 
             return ownAuctions.Count > 0 ? $"OWN_AUCTIONS|{string.Join(";", ownAuctions)}" : "OWN_AUCTIONS|EMPTY";
+
         }
 
 
 
-        if (command == "ADD_AUCTION" && parts.Length == 7) // Теперь ожидаем 7 параметров
+        if (command == "ADD_AUCTION" && parts.Length == 8) // Теперь ожидаем 8 параметров
         {
             if (!int.TryParse(parts[1], out int ownerId))
             {
@@ -263,18 +268,19 @@ class AuctionServer
                 return "ERROR|Некорректная цена";
             }
 
-            string category = parts[5]; // Категория
-            string endTime = parts[6]; // Время окончания
+            string category = parts[5];
+            string endTime = parts[6];
+            string imageUrl = parts[7]; // Новый параметр
 
-            // Создаем SQL-запрос для добавления нового аукциона
-            cmd.CommandText = "INSERT INTO Auctions (OwnerId, Name, Description, StartPrice, Category, EndTime) " +
-                              "VALUES (@ownerId, @name, @description, @startPrice, @category, @endTime)";
+            cmd.CommandText = "INSERT INTO Auctions (OwnerId, Name, Description, StartPrice, Category, EndTime, ImageUrl) " +
+                              "VALUES (@ownerId, @name, @description, @startPrice, @category, @endTime, @imageUrl)";
             cmd.Parameters.AddWithValue("@ownerId", ownerId);
             cmd.Parameters.AddWithValue("@name", name);
             cmd.Parameters.AddWithValue("@description", description);
             cmd.Parameters.AddWithValue("@startPrice", startPrice);
             cmd.Parameters.AddWithValue("@category", category);
             cmd.Parameters.AddWithValue("@endTime", endTime);
+            cmd.Parameters.AddWithValue("@imageUrl", imageUrl);
 
             try
             {
@@ -286,6 +292,7 @@ class AuctionServer
                 return $"ERROR|Ошибка БД: {ex.Message}";
             }
         }
+
 
         // Обновление статуса аукциона
         if (command == "UPDATE_AUCTION_STATUS" && parts.Length == 3)
@@ -381,10 +388,10 @@ class AuctionServer
             conn2.Open();
             using var cmd2 = new SQLiteCommand(conn2);
 
-            cmd2.CommandText = @"SELECT A.Name, O.Username, A.StartPrice, A.Category, A.EndTime 
-                         FROM Auctions A 
-                         JOIN Owners O ON A.OwnerId = O.Id 
-                         WHERE A.Status = 'Pending' AND A.Category = @category";
+            cmd2.CommandText = @"SELECT A.Name, O.Username, A.StartPrice, A.Category, A.EndTime, A.ImageUrl 
+                     FROM Auctions A 
+                     JOIN Owners O ON A.OwnerId = O.Id 
+                     WHERE A.Status = 'Pending' AND A.Category = @category";
             cmd2.Parameters.AddWithValue("@category", category);
 
             using var reader2 = cmd2.ExecuteReader();
@@ -397,11 +404,13 @@ class AuctionServer
                 double startPrice = reader2.GetDouble(2);
                 string categoryName = reader2.GetString(3);
                 string endTime = reader2.GetString(4);
+                string imageUrl = reader2.IsDBNull(5) ? "" : reader2.GetString(5);
 
-                filteredAuctions.Add($"{name},{owner},{startPrice},{categoryName},{endTime}");
+                filteredAuctions.Add($"{name},{owner},{startPrice},{categoryName},{endTime},{imageUrl}");
             }
 
             return filteredAuctions.Count > 0 ? $"AUCTIONS|{string.Join(";", filteredAuctions)}" : "AUCTIONS|EMPTY";
+
         }
 
         // Закрытие аукциона
@@ -448,42 +457,6 @@ class AuctionServer
             return "ERROR|Пользователь не найден";
         }
 
-        //if (command == "CHANGE_PASSWORD" && parts.Length == 3)
-        //{
-        //    string username = parts[1];
-        //    string newPassword = parts[2]; // Желательно передавать уже хэшированный пароль
-
-        //    cmd.CommandText = "UPDATE Users SET Password = @password WHERE Username = @username";
-        //    cmd.Parameters.AddWithValue("@password", newPassword);
-        //    cmd.Parameters.AddWithValue("@username", username);
-
-        //    int rowsUpdated = cmd.ExecuteNonQuery();
-        //    return rowsUpdated > 0 ? "SUCCESS|Пароль изменен" : "ERROR|Пользователь не найден";
-        //}
-
-        
-
-        if (command == "UPDATE_PROFILE" && parts.Length == 6)
-        {
-            string username = parts[1];
-            string email = parts[2];
-            string address = parts[3];
-            string cardNumber = parts[4];
-            string profileImage = parts[5];
-
-            cmd.CommandText = @"UPDATE Users 
-                        SET Email = @Email, Address = @Address, CardNumber = @CardNumber, ProfileImage = @ProfileImage 
-                        WHERE Username = @Username";
-
-            cmd.Parameters.AddWithValue("@Email", email);
-            cmd.Parameters.AddWithValue("@Address", address);
-            cmd.Parameters.AddWithValue("@CardNumber", cardNumber);
-            cmd.Parameters.AddWithValue("@ProfileImage", profileImage);
-            cmd.Parameters.AddWithValue("@Username", username);
-
-            int rowsUpdated = cmd.ExecuteNonQuery();
-            return rowsUpdated > 0 ? "SUCCESS|Профиль обновлен" : "ERROR|Пользователь не найден";
-        }
 
 
         return "ERROR|Неизвестная команда";

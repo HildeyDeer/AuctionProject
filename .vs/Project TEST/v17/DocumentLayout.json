@@ -3,19 +3,63 @@
   "WorkspaceRootPath": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{01E5838D-4DA5-4518-BB70-9F7DA37666D3}|AuctionClient\\AuctionClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionclient\\auctionactivewindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{01E5838D-4DA5-4518-BB70-9F7DA37666D3}|AuctionClient\\AuctionClient.csproj|solutionrelative:auctionclient\\auctionactivewindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{01E5838D-4DA5-4518-BB70-9F7DA37666D3}|AuctionClient\\AuctionClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionclient\\auctionwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{01E5838D-4DA5-4518-BB70-9F7DA37666D3}|AuctionClient\\AuctionClient.csproj|solutionrelative:auctionclient\\auctionwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6775B660-3B4F-4EA6-8D8C-6E6984C23255}|AuctionServer\\AuctionServer.csproj|C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\auctionserver\\auctionserver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6775B660-3B4F-4EA6-8D8C-6E6984C23255}|AuctionServer\\AuctionServer.csproj|solutionrelative:auctionserver\\auctionserver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{01E5838D-4DA5-4518-BB70-9F7DA37666D3}|AuctionClient\\AuctionClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionclient\\auctiondetailswindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{01E5838D-4DA5-4518-BB70-9F7DA37666D3}|AuctionClient\\AuctionClient.csproj|solutionrelative:auctionclient\\auctiondetailswindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionownerclient\\auctiondetailswindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|solutionrelative:auctionownerclient\\auctiondetailswindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionownerclient\\addauctionwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|solutionrelative:auctionownerclient\\addauctionwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionownerclient\\owneractiveauctionwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|solutionrelative:auctionownerclient\\owneractiveauctionwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{01E5838D-4DA5-4518-BB70-9F7DA37666D3}|AuctionClient\\AuctionClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionclient\\registerwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{01E5838D-4DA5-4518-BB70-9F7DA37666D3}|AuctionClient\\AuctionClient.csproj|solutionrelative:auctionclient\\registerwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\auctionownerclient\\ownerauctionwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|solutionrelative:auctionownerclient\\ownerauctionwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionownerclient\\auctiondetailswindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|solutionrelative:auctionownerclient\\auctiondetailswindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{01E5838D-4DA5-4518-BB70-9F7DA37666D3}|AuctionClient\\AuctionClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionclient\\profilewindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{01E5838D-4DA5-4518-BB70-9F7DA37666D3}|AuctionClient\\AuctionClient.csproj|solutionrelative:auctionclient\\profilewindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionownerclient\\addauctionwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|solutionrelative:auctionownerclient\\addauctionwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{01E5838D-4DA5-4518-BB70-9F7DA37666D3}|AuctionClient\\AuctionClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionclient\\registerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{01E5838D-4DA5-4518-BB70-9F7DA37666D3}|AuctionClient\\AuctionClient.csproj|solutionrelative:auctionclient\\registerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionownerclient\\ownerauctionwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|solutionrelative:auctionownerclient\\ownerauctionwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6775B660-3B4F-4EA6-8D8C-6E6984C23255}|AuctionServer\\AuctionServer.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionserver\\auctionserver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6775B660-3B4F-4EA6-8D8C-6E6984C23255}|AuctionServer\\AuctionServer.csproj|solutionrelative:auctionserver\\auctionserver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionownerclient\\ownerauctionwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|solutionrelative:auctionownerclient\\ownerauctionwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|c:\\users\\user\\downloads\\project test\\project test\\auctionownerclient\\loginwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\auctionownerclient\\loginwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0D6AD554-AE84-495D-A44B-BE09E9F58F46}|AuctionOwnerClient\\AuctionOwnerClient.csproj|solutionrelative:auctionownerclient\\loginwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -34,37 +78,177 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "AuctionWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\AuctionWindow.xaml.cs",
+              "RelativeDocumentMoniker": "AuctionClient\\AuctionWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\AuctionWindow.xaml.cs",
+              "RelativeToolTip": "AuctionClient\\AuctionWindow.xaml.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAlAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-16T14:45:39.448Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "AddAuctionWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\AddAuctionWindow.xaml.cs",
+              "RelativeDocumentMoniker": "AuctionOwnerClient\\AddAuctionWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\AddAuctionWindow.xaml.cs",
+              "RelativeToolTip": "AuctionOwnerClient\\AddAuctionWindow.xaml.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAADUAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-16T13:40:10.817Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AuctionDetailsWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\AuctionDetailsWindow.xaml.cs",
+              "RelativeDocumentMoniker": "AuctionOwnerClient\\AuctionDetailsWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\AuctionDetailsWindow.xaml.cs",
+              "RelativeToolTip": "AuctionOwnerClient\\AuctionDetailsWindow.xaml.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAEYAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-16T13:37:08.344Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "AuctionServer.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionServer\\AuctionServer.cs",
               "RelativeDocumentMoniker": "AuctionServer\\AuctionServer.cs",
               "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionServer\\AuctionServer.cs",
               "RelativeToolTip": "AuctionServer\\AuctionServer.cs",
-              "ViewState": "AQIAAFYBAAAAAAAAAAAIwHQBAAAAAAAA",
+              "ViewState": "AQIAAJ4AAAAAAAAAAAAAAA4AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-16T13:21:56.316Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
+              "Title": "AuctionActiveWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\AuctionActiveWindow.xaml.cs",
+              "RelativeDocumentMoniker": "AuctionClient\\AuctionActiveWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\AuctionActiveWindow.xaml.cs",
+              "RelativeToolTip": "AuctionClient\\AuctionActiveWindow.xaml.cs",
+              "ViewState": "AQIAABgAAAAAAAAAAAAwwC0AAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-16T14:50:19.196Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AuctionDetailsWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\AuctionDetailsWindow.xaml.cs",
+              "RelativeDocumentMoniker": "AuctionClient\\AuctionDetailsWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\AuctionDetailsWindow.xaml.cs",
+              "RelativeToolTip": "AuctionClient\\AuctionDetailsWindow.xaml.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAFEAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-16T14:48:20.429Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "OwnerActiveAuctionWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\OwnerActiveAuctionWindow.xaml.cs",
+              "RelativeDocumentMoniker": "AuctionOwnerClient\\OwnerActiveAuctionWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\OwnerActiveAuctionWindow.xaml.cs",
+              "RelativeToolTip": "AuctionOwnerClient\\OwnerActiveAuctionWindow.xaml.cs",
+              "ViewState": "AQIAABkAAAAAAAAAAAAgwB4AAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-16T14:43:28.408Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ProfileWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\ProfileWindow.xaml.cs",
+              "RelativeDocumentMoniker": "AuctionClient\\ProfileWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\ProfileWindow.xaml.cs",
+              "RelativeToolTip": "AuctionClient\\ProfileWindow.xaml.cs",
+              "ViewState": "AQIAABYAAAAAAAAAAAAowDwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-16T14:27:22.129Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "OwnerAuctionWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\OwnerAuctionWindow.xaml.cs",
               "RelativeDocumentMoniker": "AuctionOwnerClient\\OwnerAuctionWindow.xaml.cs",
               "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\OwnerAuctionWindow.xaml.cs",
               "RelativeToolTip": "AuctionOwnerClient\\OwnerAuctionWindow.xaml.cs",
-              "ViewState": "AQIAAOEAAAAAAAAAAAAIwAUBAAAAAAAA",
+              "ViewState": "AQIAAL0AAAAAAAAAAAAAwM8AAAAQAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-16T13:19:44.429Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 7,
+              "Title": "RegisterWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\RegisterWindow.xaml.cs",
+              "RelativeDocumentMoniker": "AuctionClient\\RegisterWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\RegisterWindow.xaml.cs",
+              "RelativeToolTip": "AuctionClient\\RegisterWindow.xaml.cs",
+              "ViewState": "AQIAADwAAAAAAAAAAAAwwF0AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-16T13:38:28.348Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "AuctionDetailsWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\AuctionDetailsWindow.xaml",
+              "RelativeDocumentMoniker": "AuctionOwnerClient\\AuctionDetailsWindow.xaml",
+              "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\AuctionDetailsWindow.xaml",
+              "RelativeToolTip": "AuctionOwnerClient\\AuctionDetailsWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-03-16T14:30:04.629Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "AddAuctionWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\AddAuctionWindow.xaml",
+              "RelativeDocumentMoniker": "AuctionOwnerClient\\AddAuctionWindow.xaml",
+              "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\AddAuctionWindow.xaml",
+              "RelativeToolTip": "AuctionOwnerClient\\AddAuctionWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-03-16T13:37:40.994Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "RegisterWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\RegisterWindow.xaml",
+              "RelativeDocumentMoniker": "AuctionClient\\RegisterWindow.xaml",
+              "ToolTip": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\RegisterWindow.xaml",
+              "RelativeToolTip": "AuctionClient\\RegisterWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-03-16T13:38:36.442Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "OwnerAuctionWindow.xaml",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\OwnerAuctionWindow.xaml",
               "RelativeDocumentMoniker": "AuctionOwnerClient\\OwnerAuctionWindow.xaml",
@@ -76,7 +260,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 14,
               "Title": "LoginWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\LoginWindow.xaml.cs",
               "RelativeDocumentMoniker": "AuctionOwnerClient\\LoginWindow.xaml.cs",
@@ -84,12 +268,11 @@
               "RelativeToolTip": "AuctionOwnerClient\\LoginWindow.xaml.cs",
               "ViewState": "AQIAAAMAAAAAAAAAAAAAABMAAABNAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-16T13:13:26.684Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-16T13:13:26.684Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 16,
               "Title": "LoginWindow.xaml",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionClient\\LoginWindow.xaml",
               "RelativeDocumentMoniker": "AuctionClient\\LoginWindow.xaml",
@@ -100,7 +283,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 15,
               "Title": "LoginWindow.xaml",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\Project TEST\\Project TEST\\AuctionOwnerClient\\LoginWindow.xaml",
               "RelativeDocumentMoniker": "AuctionOwnerClient\\LoginWindow.xaml",

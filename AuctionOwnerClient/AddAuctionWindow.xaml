@@ -107,6 +107,16 @@
                                     Margin="5"
                                     BorderBrush="#444444"
                                     BorderThickness="1"/>
+                <!-- Выбор изображения -->
+                <TextBlock Text="Изображение" Style="{StaticResource TextStyle}" Margin="5"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBox x:Name="AuctionImagePathBox" Style="{StaticResource InputStyle}" IsReadOnly="True" Width="230"/>
+                    <Button Content="Обзор..." Click="BrowseImage_Click" Width="70" Height="35" Style="{StaticResource RoundedButtonStyle}" FontSize="14" Margin="5,0,0,0"/>
+                </StackPanel>
+
+                <!-- Предварительный просмотр изображения -->
+                <Image x:Name="AuctionImagePreview" Width="300" Height="200" Margin="5" Stretch="Uniform" Visibility="Collapsed"/>
+
 
                 <!-- Кнопки -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">

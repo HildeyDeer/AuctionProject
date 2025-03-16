@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace AuctionClient
@@ -74,7 +74,7 @@ namespace AuctionClient
                             foreach (string auction in parts[1].Split(';'))
                             {
                                 string[] details = auction.Split(',');
-                                if (details.Length == 5)
+                                if (details.Length == 6) // Теперь 6 элементов
                                 {
                                     AuctionList.Items.Add(new Auction
                                     {
@@ -82,7 +82,8 @@ namespace AuctionClient
                                         OwnerUsername = details[1],
                                         StartPrice = details[2] + " $",
                                         Category = details[3],
-                                        EndTime = details[4]
+                                        EndTime = details[4],
+                                        ImagePath = details[5] // Путь к изображению
                                     });
                                 }
                             }
@@ -121,7 +122,7 @@ namespace AuctionClient
                         foreach (string auction in parts[1].Split(';'))
                         {
                             string[] details = auction.Split(',');
-                            if (details.Length == 5)
+                            if (details.Length == 6) // Теперь 6 элементов
                             {
                                 AuctionList.Items.Add(new Auction
                                 {
@@ -129,7 +130,8 @@ namespace AuctionClient
                                     OwnerUsername = details[1],
                                     StartPrice = details[2] + " $",
                                     Category = details[3],
-                                    EndTime = details[4]
+                                    EndTime = details[4],
+                                    ImagePath = details[5] // Путь к изображению
                                 });
                             }
                         }
@@ -137,7 +139,6 @@ namespace AuctionClient
                 });
             }
         }
-
 
         private async void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -156,7 +157,7 @@ namespace AuctionClient
                 if (response.StartsWith("AUCTION_DETAILS"))
                 {
                     string[] parts = response.Split('|');
-                    if (parts.Length == 8)
+                    if (parts.Length == 9) // Теперь 9 элементов (с учетом пути к изображению)
                     {
                         string name = parts[1];
                         string owner = parts[2];
@@ -165,9 +166,10 @@ namespace AuctionClient
                         string category = parts[5];
                         string endTime = parts[6];
                         string status = parts[7];
+                        string imagePath = parts[8]; // Путь к изображению
 
                         AuctionDetailsWindow detailsWindow = new AuctionDetailsWindow(
-                            name, owner, startPrice, description, category, endTime, username
+                            name, owner, startPrice, description, category, endTime, username, imagePath
                         );
                         detailsWindow.Show();
                     }
@@ -252,7 +254,7 @@ namespace AuctionClient
                         foreach (string auction in parts[1].Split(';'))
                         {
                             string[] details = auction.Split(',');
-                            if (details.Length == 5)
+                            if (details.Length == 6) // Теперь 6 элементов
                             {
                                 AuctionList.Items.Add(new Auction
                                 {
@@ -260,7 +262,8 @@ namespace AuctionClient
                                     OwnerUsername = details[1],
                                     StartPrice = details[2] + " $",
                                     Category = details[3],
-                                    EndTime = details[4]
+                                    EndTime = details[4],
+                                    ImagePath = details[5] // Путь к изображению
                                 });
                             }
                         }
@@ -277,6 +280,7 @@ namespace AuctionClient
             public string Category { get; set; }
             public string EndTime { get; set; }
             public string Status { get; set; }
+            public string ImagePath { get; set; } // Путь к изображению
         }
     }
 }
