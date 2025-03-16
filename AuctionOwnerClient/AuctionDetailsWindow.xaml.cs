@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AuctionClient;
+using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -12,8 +13,9 @@ namespace AuctionOwnerClient
         private string endTime;
         private string description;
         private bool isOwner;
+        private string ownerName;
 
-        public AuctionDetailsWindow(string name, double price, string description, string category, string endTime, bool isOwner)
+        public AuctionDetailsWindow(string name, double price, string description, string category, string endTime, bool isOwner, string ownerName)
         {
             InitializeComponent();
 
@@ -23,6 +25,7 @@ namespace AuctionOwnerClient
             this.endTime = endTime;
             this.description = description;
             this.isOwner = isOwner;
+            this.ownerName = ownerName;
 
             AuctionName.Text = name;
             AuctionPrice.Text = price.ToString("F2") + " $";
@@ -37,10 +40,28 @@ namespace AuctionOwnerClient
             AuctionImage.Source = new BitmapImage(new Uri("https://geauction.com/wp-content/uploads/2018/07/5-Auction-Tips-for-Beginners2.jpg"));
         }
 
+
         private void JoinAuction_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Здесь можно реализовать логику для управления аукционом.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-            Close();
+            if (isOwner)
+            {
+                // Создаём окно владельца и передаём нужные параметры
+                var ownerWindow = new AuctionOwnerWindow(
+                    auctionName,
+                    ownerName,  // Владелец — это текущий пользователь
+                    description,
+                    "https://geauction.com/wp-content/uploads/2018/07/5-Auction-Tips-for-Beginners2.jpg",
+                    endTime // Заглушка для фото
+                );
+
+                ownerWindow.Show();
+                Close();
+            }
+            else
+            {
+                MessageBox.Show("У вас нет прав для управления этим аукционом.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
+
     }
 }

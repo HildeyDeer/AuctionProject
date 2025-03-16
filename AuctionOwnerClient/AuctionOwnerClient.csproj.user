@@ -13,6 +13,9 @@
     <Compile Update="AuctionDetailsWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="OwnerActiveAuctionWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="OwnerAuctionWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -25,6 +28,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="LoginWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="OwnerActiveAuctionWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="OwnerAuctionWindow.xaml">

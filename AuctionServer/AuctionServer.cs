@@ -224,9 +224,9 @@ class AuctionServer
             conn2.Open();
             using var cmd2 = new SQLiteCommand(conn2);
 
-            cmd2.CommandText = @"SELECT Name, StartPrice, Category, EndTime, Status 
-                         FROM Auctions 
-                         WHERE OwnerId = @ownerId";
+            cmd2.CommandText = @"SELECT Name, Description, StartPrice, Category, EndTime, Status 
+                     FROM Auctions 
+                     WHERE OwnerId = @ownerId";
             cmd2.Parameters.AddWithValue("@ownerId", ownerId);
 
             using var reader2 = cmd2.ExecuteReader();
@@ -235,16 +235,18 @@ class AuctionServer
             while (reader2.Read())
             {
                 string name = reader2.GetString(0);
-                double startPrice = reader2.GetDouble(1);
-                string category = reader2.GetString(2);
-                string endTime = reader2.GetString(3);
-                string status = reader2.GetString(4);
+                string description = reader2.IsDBNull(1) ? "" : reader2.GetString(1);
+                double startPrice = reader2.GetDouble(2);
+                string category = reader2.GetString(3);
+                string endTime = reader2.GetString(4);
+                string status = reader2.GetString(5);
 
-                ownAuctions.Add($"{name},{startPrice},{category},{endTime},{status}");
+                ownAuctions.Add($"{name},{description},{startPrice},{category},{endTime},{status}");
             }
 
             return ownAuctions.Count > 0 ? $"OWN_AUCTIONS|{string.Join(";", ownAuctions)}" : "OWN_AUCTIONS|EMPTY";
         }
+
 
 
         if (command == "ADD_AUCTION" && parts.Length == 7) // Теперь ожидаем 7 параметров
@@ -310,6 +312,7 @@ class AuctionServer
 
 
 
+
         // Обработка сообщений в чате (с префиксом владельца, если это владелец)
         if (command == "CHAT" && parts.Length == 4)
         {
@@ -317,9 +320,41 @@ class AuctionServer
             bool isOwner = parts[2] == "OWNER"; // Проверка, является ли отправитель владельцем
             string message = parts[3];
 
-            string chatMessage = isOwner ? $"CHAT|Владелец {username}: {message}" : $"CHAT|{username}: {message}";
+            // Корректная передача данных с префиксом "Владелец" для владельца
+            string chatMessage = isOwner ? $"CHAT|{username} (Владелец): {message}" : $"CHAT|{username}: {message}";
+
+            // Рассылка сообщения всем клиентам
+            //BroadcastMessage(chatMessage);
             return chatMessage;
         }
+        if (command == "GET_OWNER_NAME" && parts.Length == 2)
+        {
+            if (int.TryParse(parts[1], out int ownerId))
+            {
+                cmd.CommandText = @"SELECT Username 
+                            FROM Owners 
+                            WHERE Id = @id";
+                cmd.Parameters.AddWithValue("@id", ownerId);
+
+                object ownerNameObj = cmd.ExecuteScalar();
+                if (ownerNameObj != null)
+                {
+                    string ownerName = ownerNameObj.ToString();
+                    return $"OWNER_NAME|{ownerName}";
+                }
+                else
+                {
+                    return "ERROR|Владелец не найден";
+                }
+            }
+            else
+            {
+                return "ERROR|Некорректный ID";
+            }
+        }
+
+
+
 
         if (command == "FILTER_BY_CATEGORY" && parts.Length == 2)
         {

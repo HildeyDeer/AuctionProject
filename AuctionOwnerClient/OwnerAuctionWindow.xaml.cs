@@ -65,15 +65,16 @@ namespace AuctionOwnerClient
                         foreach (string auction in parts[1].Split(';'))
                         {
                             string[] details = auction.Split(',');
-                            if (details.Length >= 5)
+                            if (details.Length >= 6)
                             {
                                 AuctionList.Items.Add(new Auction
                                 {
                                     Name = details[0],
-                                    StartPrice = double.Parse(details[1]),
-                                    Category = details[2],
-                                    EndTime = details[3],
-                                    Status = details[4]
+                                    Description = details[1], // Добавлено описание
+                                    StartPrice = double.Parse(details[2]),
+                                    Category = details[3],
+                                    EndTime = details[4],
+                                    Status = details[5]
                                 });
                             }
                         }
@@ -81,6 +82,7 @@ namespace AuctionOwnerClient
                 });
             }
         }
+
 
         private async void CloseAuction_Click(object sender, RoutedEventArgs e)
         {
@@ -96,6 +98,34 @@ namespace AuctionOwnerClient
             {
                 await ChangeAuctionStatus(auction.Name, "Pending");
             }
+        }
+        private async Task<string> GetOwnerName(int ownerId)
+        {
+            if (stream == null)
+            {
+                MessageBox.Show("Нет подключения к серверу.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return "Неизвестен";
+            }
+
+            string request = $"GET_OWNER_NAME|{ownerId}";
+            byte[] data = Encoding.UTF8.GetBytes(request);
+            await stream.WriteAsync(data, 0, data.Length);
+            await stream.FlushAsync();
+
+            byte[] buffer = new byte[1024];
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+            await Task.Delay(500);
+
+            if (response.StartsWith("OWNER_NAME"))
+            {
+                string[] parts = response.Split('|');
+                if (parts.Length == 2)
+                {
+                    return parts[1];
+                }
+            }
+            return "Неизвестен";
         }
 
         private async Task ChangeAuctionStatus(string auctionName, string newStatus)
@@ -117,7 +147,7 @@ namespace AuctionOwnerClient
                 ShowNotification($"Статус аукциона '{auctionName}' изменён на '{newStatus}'");
 
                 // Ожидание 1.5 секунды перед обновлением списка
-                //await Task.Delay(1500);
+                await Task.Delay(500);
 
                 await RequestOwnAuctions();
             }
@@ -170,37 +200,42 @@ namespace AuctionOwnerClient
             addAuctionWindow.ShowDialog();
         }
 
-        private void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void AuctionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (AuctionList.SelectedItem is Auction selectedAuction)
             {
-                // Создание окна с деталями аукциона
+                string ownerName = await GetOwnerName(ownerId);  // Запрос имени владельца
+
                 AuctionDetailsWindow detailsWindow = new AuctionDetailsWindow(
                     selectedAuction.Name,
                     selectedAuction.StartPrice,
-                    "Описание недоступно",  // Если сервер не передаёт описание, можно оставить заглушку
+                    selectedAuction.Description, // Теперь передаётся описание
                     selectedAuction.Category,
                     selectedAuction.EndTime,
-                    true // Так как это OwnerAuctionWindow, владелец — всегда текущий пользователь
+                    true,
+                    ownerName // Передаём имя владельца
                 );
 
                 detailsWindow.ShowDialog();
             }
         }
 
+
+
         private async void RefreshAuction_Click(object sender, RoutedEventArgs e)
         {
             await RequestOwnAuctions();
         }
-
         private class Auction
         {
             public string Name { get; set; }
+            public string Description { get; set; } // Новое поле
             public double StartPrice { get; set; }
             public string Category { get; set; }
             public string EndTime { get; set; }
             public string Status { get; set; }
         }
+
     }
 }
 
