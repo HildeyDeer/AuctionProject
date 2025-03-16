@@ -48,3 +48,5 @@ C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\n
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\AuctionDetailsWindow.g.cs
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\OwnerActiveAuctionWindow.baml
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\OwnerActiveAuctionWindow.g.cs
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\OwnerRegisterWindow.baml
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionOwnerClient\obj\Debug\net8.0-windows\OwnerRegisterWindow.g.cs

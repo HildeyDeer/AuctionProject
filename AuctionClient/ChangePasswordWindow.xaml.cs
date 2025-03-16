@@ -12,12 +12,28 @@ namespace AuctionClient
         private TcpClient client;
         private NetworkStream stream;
 
-        public ChangePasswordWindow(string username, TcpClient client)
+        private const string AuthServerIp = "127.0.0.1"; // IP адрес AuthServer
+        private const int AuthServerPort = 4000; // Порт сервера аутентификации
+
+        public ChangePasswordWindow(string username)
         {
             InitializeComponent();
-            this.username = username;
-            this.client = client ?? throw new ArgumentNullException(nameof(client), "Соединение с сервером отсутствует");
-            this.stream = client.GetStream();
+            this.username = username ?? throw new ArgumentNullException(nameof(username), "Имя пользователя не может быть null");
+            ConnectToAuthServer(); // Подключаемся к серверу аутентификации при создании окна
+        }
+
+        private void ConnectToAuthServer()
+        {
+            try
+            {
+                // Создание TCP клиента для подключения к серверу аутентификации
+                client = new TcpClient(AuthServerIp, AuthServerPort);
+                stream = client.GetStream();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка подключения к серверу: " + ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private async void SavePasswordButton_Click(object sender, RoutedEventArgs e)
@@ -45,7 +61,7 @@ namespace AuctionClient
 
             try
             {
-                // Отправляем команду без текущего пароля
+                // Отправляем команду для смены пароля
                 string request = $"CHANGE_PASSWORD|{username}|{newPassword}";
                 byte[] data = Encoding.UTF8.GetBytes(request);
                 await stream.WriteAsync(data, 0, data.Length);
@@ -62,8 +78,9 @@ namespace AuctionClient
                 }
                 else
                 {
-                    MessageBox.Show("Ошибка смены пароля!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Ошибка смены пароля: " + response.Substring(response.IndexOf('|') + 1), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+
             }
             catch (Exception ex)
             {
@@ -71,5 +88,10 @@ namespace AuctionClient
             }
         }
 
+        // Закрытие соединения при закрытии окна
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            client?.Close();
+        }
     }
 }

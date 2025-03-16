@@ -211,7 +211,7 @@ namespace AuctionClient
         private async void EndAuction()
         {
             countdownTimer.Stop();
-            TimerText.Text = $"Аукцион завершён - победитель {lastBidder}";
+            TimerText.Text = $"Аукцион завершён - {(currentBid > 0 ? $"победитель {lastBidder}" : "победителя нет")}";
 
             // Блокируем кнопку ставок и поле ввода
             PlaceBidButton.IsEnabled = false;

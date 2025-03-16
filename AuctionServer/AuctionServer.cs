@@ -431,18 +431,20 @@ class AuctionServer
             return "ERROR|Пользователь не найден";
         }
 
-        if (command == "CHANGE_PASSWORD" && parts.Length == 3)
-        {
-            string username = parts[1];
-            string newPassword = parts[2]; // Желательно передавать уже хэшированный пароль
+        //if (command == "CHANGE_PASSWORD" && parts.Length == 3)
+        //{
+        //    string username = parts[1];
+        //    string newPassword = parts[2]; // Желательно передавать уже хэшированный пароль
 
-            cmd.CommandText = "UPDATE Users SET Password = @password WHERE Username = @username";
-            cmd.Parameters.AddWithValue("@password", newPassword);
-            cmd.Parameters.AddWithValue("@username", username);
+        //    cmd.CommandText = "UPDATE Users SET Password = @password WHERE Username = @username";
+        //    cmd.Parameters.AddWithValue("@password", newPassword);
+        //    cmd.Parameters.AddWithValue("@username", username);
 
-            int rowsUpdated = cmd.ExecuteNonQuery();
-            return rowsUpdated > 0 ? "SUCCESS|Пароль изменен" : "ERROR|Пользователь не найден";
-        }
+        //    int rowsUpdated = cmd.ExecuteNonQuery();
+        //    return rowsUpdated > 0 ? "SUCCESS|Пароль изменен" : "ERROR|Пользователь не найден";
+        //}
+
+        
 
         if (command == "UPDATE_PROFILE" && parts.Length == 6)
         {

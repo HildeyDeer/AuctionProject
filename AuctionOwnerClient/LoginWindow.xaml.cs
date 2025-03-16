@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AuctionClient;
+using System;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,5 +75,12 @@ namespace AuctionOwnerClient
             }
             return null;
         }
+
+        private void OpenOwnerRegisterWindow_Click(object sender, RoutedEventArgs e)
+        {
+            OwnerRegisterWindow registerWindow = new OwnerRegisterWindow();
+            registerWindow.Show();
+        }
+
     }
 }

@@ -124,7 +124,7 @@ namespace AuctionClient {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/AuctionOwnerClient;component/owneractiveauctionwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/AuctionOwnerClient;V1.0.0.0;component/owneractiveauctionwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\OwnerActiveAuctionWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

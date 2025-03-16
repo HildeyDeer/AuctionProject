@@ -53,7 +53,7 @@ namespace AuctionClient
                 return;
             }
 
-            ChangePasswordWindow changePasswordWindow = new ChangePasswordWindow(username, client);
+            ChangePasswordWindow changePasswordWindow = new ChangePasswordWindow(username);
             changePasswordWindow.ShowDialog();
         }
     }
