@@ -219,6 +219,46 @@ namespace AuctionOwnerClient
                 detailsWindow.ShowDialog();
             }
         }
+        private async void DeleteAuction_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is Auction auction)
+            {
+                var result = MessageBox.Show($"Вы уверены, что хотите удалить аукцион '{auction.Name}'?",
+                                             "Подтверждение удаления",
+                                             MessageBoxButton.YesNo,
+                                             MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    await DeleteAuction(auction.Name);
+                }
+            }
+        }
+
+        private async Task DeleteAuction(string auctionName)
+        {
+            if (stream == null) return;
+
+            string request = $"DELETE_AUCTION|{auctionName}";
+            byte[] data = Encoding.UTF8.GetBytes(request);
+            await stream.WriteAsync(data, 0, data.Length);
+            await stream.FlushAsync();
+
+            byte[] buffer = new byte[4096];
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            if (response.StartsWith("SUCCESS"))
+            {
+                ShowNotification($"Аукцион '{auctionName}' удален");
+                await Task.Delay(500);
+                await RequestOwnAuctions();
+            }
+            else if (response.StartsWith("ERROR"))
+            {
+                MessageBox.Show(response.Split('|')[1], "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
 
 

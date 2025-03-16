@@ -4,11 +4,10 @@
         Title="Мои аукционы" Height="500" Width="700" Background="#1E1E1E"
         ResizeMode="CanResize" SizeToContent="Manual">
     <Window.Resources>
-        <!-- Стиль кнопок -->
-        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+        <!-- Базовый стиль кнопок -->
+        <Style x:Key="BaseButtonStyle" TargetType="Button">
             <Setter Property="Padding" Value="10"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Background" Value="#005F9E"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -26,6 +25,24 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <!-- Желтая кнопка (Закрыть) -->
+        <Style x:Key="CloseButtonStyle" BasedOn="{StaticResource BaseButtonStyle}" TargetType="Button">
+            <Setter Property="Background" Value="#FFC107"/>
+            <!-- Желтый -->
+        </Style>
+
+        <!-- Зеленая кнопка (Восстановить) -->
+        <Style x:Key="RestoreButtonStyle" BasedOn="{StaticResource BaseButtonStyle}" TargetType="Button">
+            <Setter Property="Background" Value="#4CAF50"/>
+            <!-- Зеленый -->
+        </Style>
+
+        <!-- Красная кнопка (Удалить) -->
+        <Style x:Key="DeleteButtonStyle" BasedOn="{StaticResource BaseButtonStyle}" TargetType="Button">
+            <Setter Property="Background" Value="#F44336"/>
+            <!-- Красный -->
         </Style>
 
         <!-- Стиль карточек -->
@@ -47,17 +64,15 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <!-- Добавляем место для уведомлений -->
         </Grid.RowDefinitions>
 
         <!-- Верхняя панель -->
         <DockPanel LastChildFill="True">
             <TextBlock Text="Мои аукционы" FontSize="24" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" Margin="10"/>
-
             <Button x:Name="RefreshAuctionButton" Content="Обновить аукционы" Click="RefreshAuction_Click"
-                HorizontalAlignment="Right" Margin="10" Style="{StaticResource RoundedButtonStyle}"/>
+                HorizontalAlignment="Right" Margin="10" Style="{StaticResource BaseButtonStyle}" Background="#005F9E"/>
             <Button x:Name="AddAuctionButton" Content="Добавить аукцион" Click="AddAuction_Click"
-                HorizontalAlignment="Right" Margin="10" Style="{StaticResource RoundedButtonStyle}"/>
+                HorizontalAlignment="Right" Margin="10" Style="{StaticResource BaseButtonStyle}" Background="#005F9E"/>
         </DockPanel>
 
         <!-- Список аукционов -->
@@ -70,13 +85,15 @@
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" Width="150"/>
                                     <TextBlock Text="{Binding Status}" FontSize="14" Foreground="#CCCCCC" VerticalAlignment="Center" Width="100"/>
-
                                     <Button Content="Закрыть" Click="CloseAuction_Click"
-                                        Style="{StaticResource RoundedButtonStyle}" 
+                                        Style="{StaticResource CloseButtonStyle}" 
                                         Margin="10,0,0,0" Width="80"/>
                                     <Button Content="Восстановить" Click="RestoreAuction_Click" 
-                                        Style="{StaticResource RoundedButtonStyle}" 
+                                        Style="{StaticResource RestoreButtonStyle}" 
                                         Margin="10,0,0,0" Width="100"/>
+                                    <Button Content="Удалить" Click="DeleteAuction_Click"
+                                        Style="{StaticResource DeleteButtonStyle}" 
+                                        Margin="10,0,0,0" Width="80"/>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

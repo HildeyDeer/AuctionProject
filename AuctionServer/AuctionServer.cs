@@ -353,6 +353,23 @@ class AuctionServer
             }
         }
 
+        if (command == "DELETE_AUCTION" && parts.Length == 2)
+        {
+            string auctionName = parts[1];
+
+            cmd.CommandText = "DELETE FROM Auctions WHERE Name = @name";
+            cmd.Parameters.AddWithValue("@name", auctionName);
+
+            int rowsDeleted = cmd.ExecuteNonQuery();
+            if (rowsDeleted > 0)
+            {
+                return $"SUCCESS|Аукцион {auctionName} удален";
+            }
+            else
+            {
+                return "ERROR|Аукцион не найден";
+            }
+        }
 
 
 
