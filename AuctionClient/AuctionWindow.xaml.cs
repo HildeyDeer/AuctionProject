@@ -197,14 +197,15 @@ namespace AuctionClient
             if (response.StartsWith("USER_DETAILS"))
             {
                 string[] parts = response.Split('|');
-                if (parts.Length >= 6)
+                if (parts.Length >= 7) // Теперь ожидаем минимум 7 полей, включая баланс
                 {
                     string email = parts[3];
                     string address = parts[4];
                     string cardNumber = parts[5];
-                    string profileImage = parts.Length > 6 ? parts[6] : "";
+                    string profileImage = parts.Length > 7 ? parts[6] : "";
+                    string balance = parts[7];  // Новый столбец баланса
 
-                    ProfileWindow profileWindow = new ProfileWindow(username, email, address, cardNumber, profileImage, client);
+                    ProfileWindow profileWindow = new ProfileWindow(username, email, address, cardNumber, profileImage, balance, client);
                     profileWindow.Show();
                 }
                 else
@@ -213,6 +214,7 @@ namespace AuctionClient
                 }
             }
         }
+
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {

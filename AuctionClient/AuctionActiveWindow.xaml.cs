@@ -22,9 +22,10 @@ namespace AuctionClient
         private DispatcherTimer countdownTimer;
         private DateTime auctionEndTime;
         private bool isOwner;
-        private string lastBidder; // Имя последнего, кто сделал ставку
+        private string lastBidder; // Последний сделавший ставку
         private string auctionDescription;
         private string auctionImageUrl;
+        private double userBalance = 0.0; // Баланс пользователя
 
         public AuctionActiveWindow(string username, string auctionName, string owner, string startPrice, string endTime, bool isOwner, string description, string imageUrl)
         {
@@ -49,7 +50,6 @@ namespace AuctionClient
             ProfileButton.Content = $"Профиль ({username})";
         }
 
-
         private async Task ConnectToServer()
         {
             try
@@ -58,6 +58,10 @@ namespace AuctionClient
                 await client.ConnectAsync(AuctionServer, AuctionPort);
                 stream = client.GetStream();
                 _ = Task.Run(ListenForMessages);
+
+                // Обновляем баланс и текущую ставку при подключении
+                _ = Task.Run(UpdateUserBalance);
+                _ = Task.Run(RequestCurrentBid);
             }
             catch (Exception ex)
             {
@@ -104,10 +108,11 @@ namespace AuctionClient
                         if (parts.Length == 4 && parts[1] == auctionName && double.TryParse(parts[3], out double newBid))
                         {
                             currentBid = (int)newBid;
-                            lastBidder = parts[2]; // Получаем имя последнего поставившего
+                            lastBidder = parts[2]; // Последний участник
                             CurrentBidText.Text = $"Текущая ставка: {currentBid} $ от {lastBidder}";
                         }
                     }
+
                     else if (message.StartsWith("CHAT"))
                     {
                         string chatMessage = message.Substring(5);  // Получаем текст сообщения без префикса CHAT|
@@ -130,9 +135,6 @@ namespace AuctionClient
                 });
             }
         }
-
-
-
         private async void SendChatButton_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(ChatInput.Text) || stream == null) return;
@@ -144,10 +146,52 @@ namespace AuctionClient
 
             ChatInput.Clear(); // Очищаем поле ввода после отправки
         }
+        private async Task UpdateUserBalance()
+        {
+            if (stream == null) return;
 
-        // Обновляем ставки
+            string request = $"GET_BALANCE|{username}";
+            byte[] data = Encoding.UTF8.GetBytes(request);
+            await stream.WriteAsync(data, 0, data.Length);
+            await stream.FlushAsync();
+
+            byte[] buffer = new byte[1024];
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            if (bytesRead == 0) return; // Соединение разорвано
+
+            string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+            if (!response.StartsWith("BALANCE|")) return;
+
+            string[] parts = response.Split('|');
+            if (parts.Length < 2) return; // Некорректный ответ
+
+            if (double.TryParse(parts[1], NumberStyles.Any, CultureInfo.InvariantCulture, out double balance))
+            {
+                userBalance = balance; // Переменная остается без изменений
+
+                // Преобразуем в строку с разделением тысяч и двумя знаками после запятой
+                string formattedBalance = (balance / 100).ToString("#,0.00", CultureInfo.InvariantCulture);
+
+                Dispatcher.Invoke(() => UserBalanceText.Text = $"{formattedBalance} $");
+            }
+
+
+        }
+
+        private async Task RequestCurrentBid()
+        {
+            if (stream == null) return;
+
+            string request = $"GET_BID|{auctionName}";
+            byte[] data = Encoding.UTF8.GetBytes(request);
+            await stream.WriteAsync(data, 0, data.Length);
+            await stream.FlushAsync();
+        }
+
         private async void PlaceBidButton_Click(object sender, RoutedEventArgs e)
         {
+            await RequestCurrentBid(); // Перед ставкой обновляем данные
+            await UpdateUserBalance();
             if (DateTime.Now >= auctionEndTime)
             {
                 MessageBox.Show("Аукцион уже завершён!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -160,7 +204,13 @@ namespace AuctionClient
                 return;
             }
 
-            lastBidder = username; // Фиксируем последнего сделавшего ставку
+            if (bidValue > userBalance)
+            {
+                MessageBox.Show("Недостаточно средств на балансе!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            lastBidder = username;
 
             string bidMessage = $"BID|{auctionName}|{username}|{bidValue}";
             byte[] data = Encoding.UTF8.GetBytes(bidMessage);
@@ -168,20 +218,21 @@ namespace AuctionClient
             await stream.FlushAsync();
 
             BidAmount.Clear();
+
+            // После ставки обновляем баланс, но **не списываем**
+            await UpdateUserBalance();
         }
 
-        // Обработчик нажатия кнопки профиля
+        // Обновление метода профиля — баланс загружается вместе с остальными данными
         private async void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
             if (stream == null) return;
 
-            // Формируем и отправляем запрос на сервер
             string request = $"USER_DETAILS|{username}";
             byte[] data = Encoding.UTF8.GetBytes(request);
             await stream.WriteAsync(data, 0, data.Length);
             await stream.FlushAsync();
 
-            // Получаем ответ
             byte[] buffer = new byte[2048];
             int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
             string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
@@ -189,15 +240,15 @@ namespace AuctionClient
             if (response.StartsWith("USER_DETAILS"))
             {
                 string[] parts = response.Split('|');
-                if (parts.Length >= 6)
+                if (parts.Length >= 7) // Теперь ожидаем минимум 7 полей, включая баланс
                 {
                     string email = parts[3];
                     string address = parts[4];
                     string cardNumber = parts[5];
-                    string profileImage = parts.Length > 6 ? parts[6] : "";
+                    string profileImage = parts.Length > 7 ? parts[6] : "";
+                    string balance = parts[7];  // Новый столбец баланса
 
-                    // Открываем окно профиля, передавая все данные
-                    ProfileWindow profileWindow = new ProfileWindow(username, email, address, cardNumber, profileImage, client);
+                    ProfileWindow profileWindow = new ProfileWindow(username, email, address, cardNumber, profileImage, balance, client);
                     profileWindow.Show();
                 }
                 else
@@ -206,37 +257,60 @@ namespace AuctionClient
                 }
             }
         }
-
-        // Метод завершения аукциона
         private async void EndAuction()
         {
             countdownTimer.Stop();
             TimerText.Text = $"Аукцион завершён - {(currentBid > 0 ? $"победитель {lastBidder}" : "победителя нет")}";
 
-            // Блокируем кнопку ставок и поле ввода
             PlaceBidButton.IsEnabled = false;
             BidAmount.IsEnabled = false;
 
-            // Отправляем запрос на закрытие аукциона в базу
             string closeAuctionMessage = $"CLOSE_AUCTION|{auctionName}";
             byte[] data = Encoding.UTF8.GetBytes(closeAuctionMessage);
-
             if (stream != null)
             {
                 await stream.WriteAsync(data, 0, data.Length);
                 await stream.FlushAsync();
             }
 
-            // Если текущий пользователь - победитель, открываем окно выигрыша
+            // **Списываем баланс только у победителя**
             if (username == lastBidder)
             {
+                await DeductWinnerBalance();
                 WinnerWindow winnerWindow = new WinnerWindow(username, auctionName, currentBid);
                 winnerWindow.Show();
                 Close();
             }
         }
 
+        private async Task DeductWinnerBalance()
+        {
+            if (stream == null) return;
 
+            string deductMessage = $"DEDUCT_BALANCE|{username}|{currentBid}";
+            byte[] data = Encoding.UTF8.GetBytes(deductMessage);
+            await stream.WriteAsync(data, 0, data.Length);
+            await stream.FlushAsync();
 
+            byte[] buffer = new byte[1024];
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            if (bytesRead == 0) return; // Соединение разорвано
+
+            string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            Dispatcher.Invoke(() =>
+            {
+                if (response.StartsWith("SUCCESS"))
+                {
+                    MessageBox.Show("Оплата успешна! Баланс списан.", "Оплата", MessageBoxButton.OK, MessageBoxImage.Information);
+                    userBalance -= currentBid;
+                    UserBalanceText.Text = $"{userBalance:F2} $";
+                }
+                else if (response.StartsWith("ERROR"))
+                {
+                    MessageBox.Show($"Ошибка: {response.Split('|')[1]}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            });
+        }
     }
 }

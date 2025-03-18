@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -42,9 +43,11 @@ class AuctionServer
                         Email TEXT UNIQUE NOT NULL,
                         Address TEXT,
                         CardNumber TEXT,
-                        ProfileImage TEXT
+                        ProfileImage TEXT,
+                        Balance REAL DEFAULT 0.0
                     );";
         cmd.ExecuteNonQuery();
+
 
         // Таблица владельцев аукционов
         cmd.CommandText = @"CREATE TABLE IF NOT EXISTS Owners (
@@ -184,37 +187,164 @@ class AuctionServer
 
         }
 
-        // Обработка ставки
+        else if (command == "TOP_UP" && parts.Length == 3)
+        {
+            string username = parts[1];
+            if (!decimal.TryParse(parts[2], NumberStyles.Any, CultureInfo.InvariantCulture, out decimal amount) || amount <= 0)
+            {
+                return "ERROR|Некорректная сумма";
+            }
+
+            try
+            {
+                // Получение текущего баланса
+                cmd.CommandText = "SELECT Balance FROM Users WHERE Username = @user";
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@user", username);
+                object result = cmd.ExecuteScalar();
+
+                if (result == null)
+                {
+                    return "ERROR|Пользователь не найден";
+                }
+
+                // Обновление баланса
+                cmd.CommandText = "UPDATE Users SET Balance = Balance + @amount WHERE Username = @user";
+                cmd.Parameters.AddWithValue("@amount", amount);
+                cmd.ExecuteNonQuery();
+
+                return "SUCCESS|Баланс пополнен";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при пополнении баланса: {ex.Message}");
+                return "ERROR|Ошибка при пополнении баланса";
+            }
+        }
+
+        else if (command == "GET_BALANCE" && parts.Length == 2)
+        {
+            string username = parts[1];
+
+            try
+            {
+                // Получаем баланс пользователя
+                cmd.CommandText = "SELECT Balance FROM Users WHERE Username = @user";
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@user", username);
+                object result = cmd.ExecuteScalar();
+
+                if (result == null)
+                {
+                    return "ERROR|Пользователь не найден";
+                }
+
+                // Преобразуем результат в число с плавающей точкой
+                if (!decimal.TryParse(result.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal balance))
+                {
+                    return "ERROR|Ошибка обработки баланса";
+                }
+
+                return $"BALANCE|{balance:F2}";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при получении баланса: {ex.Message}");
+                return "ERROR|Ошибка при получении баланса";
+            }
+        }
+
+
         if (command == "BID" && parts.Length == 4)
         {
-            string auctionName = parts[1]; // Исправлено: теперь строка
+            string auctionName = parts[1];
             string username = parts[2];
             double bidAmount = double.Parse(parts[3]);
 
-            // Обновляем ставку в базе данных
+            // Проверяем, существует ли аукцион
+            cmd.CommandText = "SELECT StartPrice FROM Auctions WHERE Name = @name";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@name", auctionName);
+            object startPriceResult = cmd.ExecuteScalar();
+
+            if (startPriceResult == null)
+            {
+                return "ERROR|Аукцион не найден";
+            }
+
+            double currentPrice = Convert.ToDouble(startPriceResult);
+
+            // Проверяем, что ставка выше текущей
+            if (bidAmount <= currentPrice)
+            {
+                return "ERROR|Ставка должна быть выше текущей";
+            }
+
+            // Проверяем баланс пользователя (но не списываем!)
+            cmd.CommandText = "SELECT Balance FROM Users WHERE Username = @username";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@username", username);
+            object balanceResult = cmd.ExecuteScalar();
+
+            if (balanceResult == null)
+            {
+                return "ERROR|Пользователь не найден";
+            }
+
+            double currentBalance = Convert.ToDouble(balanceResult);
+
+            // Проверяем, что у пользователя достаточно средств
+            if (currentBalance < bidAmount)
+            {
+                return "ERROR|Недостаточно средств на балансе";
+            }
+
+            // Обновляем текущую ставку в аукционе
             cmd.CommandText = "UPDATE Auctions SET StartPrice = @bid WHERE Name = @name";
+            cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@bid", bidAmount);
             cmd.Parameters.AddWithValue("@name", auctionName);
             cmd.ExecuteNonQuery();
 
-            // Получаем обновленные данные из БД
-            cmd.CommandText = "SELECT StartPrice FROM Auctions WHERE Name = @name";
-            cmd.Parameters.Clear();
-            cmd.Parameters.AddWithValue("@name", auctionName);
-            object newBidObj = cmd.ExecuteScalar();
-
-            if (newBidObj != null)
-            {
-                double newBid = Convert.ToDouble(newBidObj);
-                string bidResponse = $"BID_UPDATE|{auctionName}|{username}|{newBid}";
-                BroadcastMessage(bidResponse); // Рассылаем обновленные данные клиентам
-                return bidResponse;
-            }
-            else
-            {
-                return "ERROR|Аукцион не найден";
-            }
+            // Отправляем обновлённые данные
+            return $"BID_UPDATE|{auctionName}|{username}|{bidAmount}";
         }
+
+        if (command == "DEDUCT_BALANCE" && parts.Length == 3)
+        {
+            string username = parts[1];
+            double bidAmount = double.Parse(parts[2]);
+
+            // Проверяем, существует ли пользователь
+            cmd.CommandText = "SELECT Balance FROM Users WHERE Username = @username";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@username", username);
+            object balanceResult = cmd.ExecuteScalar();
+
+            if (balanceResult == null)
+            {
+                return "ERROR|Пользователь не найден";
+            }
+
+            double currentBalance = Convert.ToDouble(balanceResult);
+
+            // Проверяем, что у пользователя достаточно средств перед списанием
+            if (currentBalance < bidAmount)
+            {
+                return "ERROR|Недостаточно средств на балансе";
+            }
+
+            // Списываем баланс только после завершения аукциона
+            cmd.CommandText = "UPDATE Users SET Balance = Balance - @bidAmount WHERE Username = @username";
+            cmd.Parameters.Clear();
+            cmd.Parameters.AddWithValue("@bidAmount", bidAmount);
+            cmd.Parameters.AddWithValue("@username", username);
+            cmd.ExecuteNonQuery();
+
+            return "SUCCESS|Баланс успешно списан";
+        }
+
+
 
         if (command == "GET_OWN_AUCTIONS" && parts.Length == 2)
         {
@@ -437,7 +567,7 @@ class AuctionServer
         {
             string username = parts[1];
 
-            cmd.CommandText = @"SELECT Username, Password, Email, Address, CardNumber, ProfileImage 
+            cmd.CommandText = @"SELECT Username, Password, Email, Address, CardNumber, ProfileImage, Balance 
                         FROM Users WHERE Username = @username";
             cmd.Parameters.AddWithValue("@username", username);
 
@@ -445,17 +575,19 @@ class AuctionServer
             if (reader.Read())
             {
                 string user = reader.GetString(0);
-                string password = reader.GetString(1); // Желательно хранить хэш
+                string password = reader.GetString(1);  // Желательно хранить хэш
                 string email = reader.GetString(2);
                 string address = reader.IsDBNull(3) ? "" : reader.GetString(3);
                 string cardNumber = reader.IsDBNull(4) ? "" : reader.GetString(4);
                 string profileImage = reader.IsDBNull(5) ? "" : reader.GetString(5);
+                double balance = reader.IsDBNull(6) ? 0.0 : reader.GetDouble(6);
 
-                return $"USER_DETAILS|{user}|{password}|{email}|{address}|{cardNumber}|{profileImage}";
+                return $"USER_DETAILS|{user}|{password}|{email}|{address}|{cardNumber}|{profileImage}|{balance}";
             }
 
             return "ERROR|Пользователь не найден";
         }
+
 
 
 

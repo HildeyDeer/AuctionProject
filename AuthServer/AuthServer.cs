@@ -56,6 +56,7 @@ class AuthServer
         using var conn = new SQLiteConnection($"Data Source={DbPath};Version=3;");
         conn.Open();
         using var cmd = new SQLiteCommand(conn);
+        // Регистрация пользователя
         if (command == "REGISTER" && parts.Length >= 6)
         {
             string password = parts[2]; // Пароль, который нужно зашифровать
@@ -69,10 +70,11 @@ class AuthServer
 
             try
             {
-                cmd.CommandText = @"INSERT INTO Users (Username, Password, Email, Address, CardNumber, ProfileImage) 
-                            VALUES (@user, @pass, @mail, @addr, @card, @image)";
+                cmd.CommandText = @"INSERT INTO Users (Username, Password, Email, Address, CardNumber, ProfileImage, Balance) 
+                            VALUES (@user, @pass, @mail, @addr, @card, @image, 0.0)";
+                cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@user", username);
-                cmd.Parameters.AddWithValue("@pass", encryptedPassword); // Используем зашифрованный пароль
+                cmd.Parameters.AddWithValue("@pass", encryptedPassword);
                 cmd.Parameters.AddWithValue("@mail", email);
                 cmd.Parameters.AddWithValue("@addr", address);
                 cmd.Parameters.AddWithValue("@card", cardNumber);
@@ -87,6 +89,8 @@ class AuthServer
                 return "ERROR|Ошибка при регистрации";
             }
         }
+
+        // Логин пользователя
         else if (command == "LOGIN" && parts.Length == 3)
         {
             string password = parts[2];
@@ -95,12 +99,14 @@ class AuthServer
             string encryptedPassword = EncryptPassword(password);
 
             cmd.CommandText = "SELECT Id FROM Users WHERE Username = @user AND Password = @pass";
+            cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@user", username);
-            cmd.Parameters.AddWithValue("@pass", encryptedPassword); // Сравниваем зашифрованные пароли
+            cmd.Parameters.AddWithValue("@pass", encryptedPassword);
             object result = cmd.ExecuteScalar();
 
             return result != null ? "SUCCESS|Вход успешен" : "ERROR|Неверный логин или пароль";
         }
+
 
 
         else if (command == "OWNER_LOGIN" && parts.Length == 4)

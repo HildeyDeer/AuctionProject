@@ -32,7 +32,7 @@ namespace AuctionOwnerClient
             int? ownerId = await AuthenticateOwner(username, password, permissionKey);
             if (ownerId.HasValue)
             {
-                MessageBox.Show("Вход успешен!");
+                //MessageBox.Show("Вход успешен!");
                 OwnerAuctionWindow ownerAuctionWindow = new OwnerAuctionWindow(ownerId.Value);
                 ownerAuctionWindow.Show();
                 Close();

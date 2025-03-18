@@ -57,9 +57,20 @@
         <!-- Верхняя панель -->
         <DockPanel LastChildFill="True">
             <TextBlock Text="Аукцион" FontSize="24" FontWeight="Bold" Foreground="White" 
-                       VerticalAlignment="Center" Margin="10"/>
-            <Button x:Name="ProfileButton" Content="Профиль" Click="ProfileButton_Click"
-                    HorizontalAlignment="Right" Margin="10" Style="{StaticResource RoundedButtonStyle}"/>
+               VerticalAlignment="Center" Margin="10"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Border Background="#2D2D2D" CornerRadius="8" Padding="8" Margin="10"
+        HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="💰" FontSize="18" Margin="0,0,5,0" Foreground="#FFD700"/>
+                        <TextBlock x:Name="UserBalanceText" Text="0,00 $" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                    </StackPanel>
+                </Border>
+
+                <Button x:Name="ProfileButton" Content="Профиль" Click="ProfileButton_Click"
+                Margin="10,0,0,0" Style="{StaticResource RoundedButtonStyle}" Height="39"/>
+            </StackPanel>
         </DockPanel>
 
         <Grid Grid.Row="1">
