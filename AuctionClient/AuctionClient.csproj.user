@@ -28,6 +28,9 @@
     <Compile Update="RoleSelectionWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="TopUpWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="WinnerWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -55,6 +58,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="RoleSelectionWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="TopUpWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="WinnerWindow.xaml">

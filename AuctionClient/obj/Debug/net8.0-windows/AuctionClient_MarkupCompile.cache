@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\App.xaml
-9-248991554
+10-1902125508
 
-12-653730887
+13-817992187
 206-695789810
-AuctionActiveWindow.xaml;AuctionDetailsWindow.xaml;AuctionWindow.xaml;ChangePasswordWindow.xaml;LoginWindow.xaml;ProfileWindow.xaml;RegisterWindow.xaml;RoleSelectionWindow.xaml;WinnerWindow.xaml;
+AuctionActiveWindow.xaml;AuctionDetailsWindow.xaml;AuctionWindow.xaml;ChangePasswordWindow.xaml;LoginWindow.xaml;ProfileWindow.xaml;RegisterWindow.xaml;RoleSelectionWindow.xaml;TopUpWindow.xaml;WinnerWindow.xaml;
 
 False
 

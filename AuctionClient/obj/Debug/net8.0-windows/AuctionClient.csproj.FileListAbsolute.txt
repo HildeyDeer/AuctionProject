@@ -60,3 +60,5 @@ C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\bin\Debug\net8.0
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\bin\Debug\net8.0-windows\ru\Xceed.Wpf.AvalonDock.resources.dll
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\bin\Debug\net8.0-windows\sv\Xceed.Wpf.AvalonDock.resources.dll
 C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\bin\Debug\net8.0-windows\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\TopUpWindow.baml
+C:\Users\user\Downloads\Project TEST\Project TEST\AuctionClient\obj\Debug\net8.0-windows\TopUpWindow.g.cs

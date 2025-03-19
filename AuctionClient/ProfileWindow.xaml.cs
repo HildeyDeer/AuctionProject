@@ -68,48 +68,44 @@ namespace AuctionClient
                 return;
             }
 
-            // Окно ввода суммы
-            string amountStr = Microsoft.VisualBasic.Interaction.InputBox(
-                $"С вашей карты {cardNumber} будет произведено пополнение.\nВведите сумму:",
-                "Пополнение баланса",
-                "0"
-            );
+            var topUpWindow = new TopUpWindow(cardNumber) { Owner = this };
+            if (topUpWindow.ShowDialog() != true) return;
 
-            if (decimal.TryParse(amountStr, out decimal amount) && amount > 0)
+            decimal amount = topUpWindow.Amount;
+
+            if (client == null || !client.Connected)
             {
-                if (client == null || !client.Connected)
+                MessageBox.Show("Нет соединения с сервером!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Отправка запроса на сервер
+            NetworkStream stream = client.GetStream();
+            string request = $"TOP_UP|{username}|{amount}";
+            byte[] data = Encoding.UTF8.GetBytes(request);
+            await stream.WriteAsync(data, 0, data.Length);
+            await stream.FlushAsync();
+
+            // Получение ответа
+            byte[] buffer = new byte[1024];
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            if (response.StartsWith("SUCCESS"))
+            {
+                Dispatcher.Invoke(() =>
                 {
-                    MessageBox.Show("Нет соединения с сервером!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                // Отправка запроса на сервер
-                NetworkStream stream = client.GetStream();
-                string request = $"TOP_UP|{username}|{amount}";
-                byte[] data = Encoding.UTF8.GetBytes(request);
-                await stream.WriteAsync(data, 0, data.Length);
-                await stream.FlushAsync();
-
-                // Получение ответа
-                byte[] buffer = new byte[1024];
-                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-                if (response.StartsWith("SUCCESS"))
-                {
-                    // Обновление баланса
                     BalanceText.Text = $"{decimal.Parse(BalanceText.Text.Replace(" $", "")) + amount} $";
-                    MessageBox.Show("Баланс успешно пополнен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
-                    MessageBox.Show("Ошибка при пополнении баланса", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                });
+
+                MessageBox.Show("Баланс успешно пополнен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
-                MessageBox.Show("Некорректная сумма", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Ошибка при пополнении баланса", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+
     }
 }

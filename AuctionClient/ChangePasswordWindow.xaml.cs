@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http.Headers;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -88,6 +89,10 @@ namespace AuctionClient
             }
         }
 
+        private void CancelButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
         // Закрытие соединения при закрытии окна
         private void Window_Closed(object sender, EventArgs e)
         {
